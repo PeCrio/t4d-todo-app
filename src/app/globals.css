@@ -4,12 +4,91 @@
   --background: #ffffff;
 }
 
+@theme{
+  --color-theme-orange: #f1884d;
+  --color-theme-blue: #142948;
+  --color-overlay: rgba(0,0,0,0.2);
+}
+
 @theme inline {
   --color-background: var(--background);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+.todo-task-div {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px;
+  padding-top: 20px;
+}
+.todo-task-div span{
+  padding: 20px;
+  border: 1px solid var(--color-theme-blue);
+  border-radius: 10px;
+  width: 100%;
+  height: 120px;
+  text-align: center;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  font-weight: 600;
+  color: var(--color-theme-blue);
+  cursor: pointer;
+}
 
+.todo-task-div span:hover{
+  scale: 1.02;
+  transition: all .2s ease-in-out;
+}
+
+.inputDiv {
+  @apply bg-[#d9d9d9] border-b border-theme-blue outline-none p-2;
+}
+.inputDiv:focus {
+  @apply border-b-2;
+}
+
+@media screen and (max-width: 1032px) {
+  .todo-task-div{
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .todo-task-div{
+    grid-template-columns: 1fr;
+  }
+}
+
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  display:grid;
+  -webkit-mask: conic-gradient(from 15deg,#0000,#000);
+  animation: l26 1s infinite steps(12);
+}
+.loader,
+.loader:before,
+.loader:after{
+  background:
+    radial-gradient(closest-side at 50% 12.5%,
+     var(--color-theme-orange) 96%,#0000) 50% 0/20% 80% repeat-y,
+    radial-gradient(closest-side at 12.5% 50%,
+     var(--color-theme-orange) 96%,#0000) 0 50%/80% 20% repeat-x;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  grid-area: 1/1;
+  transform: rotate(30deg);
+}
+.loader:after {
+  transform: rotate(60deg);
+}
+
+@keyframes l26 {
+  100% {transform:rotate(1turn)}
+}
 /* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;

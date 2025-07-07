@@ -1,0 +1,7 @@
+.list_popup span{
+    cursor: pointer;
+    padding: 3px;
+}
+.list_popup span:hover{
+    color: var(--color-theme-orange);
+}

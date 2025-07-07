@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NavBar from "@/components/Layout/NavBar";
+import SideBar from "@/components/Layout/SideBar";
 
 
 export const metadata: Metadata = {
@@ -13,11 +15,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`antialiased`}
+        className={`antialiased relative h-[100vh]`}
       >
-        {children}
+        <div className="sticky top-0 bg-theme-orange">
+          <NavBar />
+        </div>
+        <div className="fixed w-[260px] left-0 h-[100vh] border-r overflow-clip">
+          <SideBar />
+        </div>
+        <div className="ml-[260px] px-4 overflow-scroll">
+          {children}
+        </div>
       </body>
     </html>
   );
