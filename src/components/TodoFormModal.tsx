@@ -2,14 +2,16 @@
 
 import { IListStructure } from '@/types/ListTypes';
 import { LocalStorageService } from '@/utils/LocalStorageService';
-import React, { useState, Dispatch, SetStateAction, useId } from 'react';
+import React, { useState, Dispatch, SetStateAction, useId, useEffect } from 'react';
 import { MdOutlineCancel } from "react-icons/md";
 
-interface AddTodoListProps {
+interface TodoFormModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
+  todoItemId?: string | number;
+  refreshTodoList: () => void;
 }
 
-const AddTodoList = ({ setModalOpen}: AddTodoListProps) => {
+const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList }: TodoFormModalProps) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
@@ -18,10 +20,26 @@ const AddTodoList = ({ setModalOpen}: AddTodoListProps) => {
     const [isLoading, setIsLoading] = useState(false);
 
     const id = useId();
+
+    useEffect(() => {
+        const preExistingData = LocalStorageService.get<IListStructure[]>();
+
+        if (todoItemId) {
+            const currentTodoItem = preExistingData?.find(item => item.id === todoItemId);
+            setName(currentTodoItem?.name || '')
+            setDescription(currentTodoItem?.description || '')
+            setDate(currentTodoItem ? currentTodoItem?.date : '')
+            setCategory(currentTodoItem?.category || '')
+        }
+    }, [todoItemId]);
+
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         try{
             setIsLoading(true);
             e.preventDefault();
+            
+            const preExistingData = LocalStorageService.get<IListStructure[]>();
             const data = {
                 name,
                 description,
@@ -30,21 +48,37 @@ const AddTodoList = ({ setModalOpen}: AddTodoListProps) => {
                 // has_subtask: subTasks.length > 0,
                 has_subtask: false,
                 completed: false,
-                id
             };
-            const preExistingData = LocalStorageService.get<IListStructure[]>();
 
-            LocalStorageService.set([
-            ...(preExistingData || []),
-            data,
-            ]);
+            if (!todoItemId) {
+                const payload = {
+                  ...data,
+                  id
+                };
+              
+                LocalStorageService.set([
+                  ...(preExistingData || []),
+                  payload,
+                ]);
+            } else {
+                const updatedList = (preExistingData || []).map(item =>
+                  item.id === todoItemId
+                    ? { ...item, ...data }
+                    : item
+                );
+              
+                LocalStorageService.set(updatedList);
+            }
+
             setModalOpen(false);
+            refreshTodoList();
         }catch(e){
             console.log(e)
         }finally{
             setIsLoading(false);
         }
     }
+
   return (
     <div className='h-full flex items-center justify-center'>
         <div className='bg-white max-h-[80%] max-w-[600px] w-full rounded-md relative'>
@@ -88,4 +122,4 @@ const AddTodoList = ({ setModalOpen}: AddTodoListProps) => {
   )
 }
 
-export default AddTodoList
+export default TodoFormModal

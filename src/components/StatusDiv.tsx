@@ -6,13 +6,21 @@ import { SlCalender } from "react-icons/sl";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import styles from './styles.module.css';
 import { LocalStorageService } from '@/utils/LocalStorageService';
+import TodoFormModal from './TodoFormModal';
+import Overlay from './Overlay';
+import { formatToLongDate } from '@/utils/Formatters';
+
 interface Props {
     data: IListStructure[];
     status: string;
-    setStatusUpdate: Dispatch<SetStateAction<boolean>>
+    setStatusUpdate: Dispatch<SetStateAction<boolean>>;
+    refreshTodoList: () => void;
 }
-const StatusDiv = ({status, data, setStatusUpdate}: Props) => {
+
+const StatusDiv = ({status, data, setStatusUpdate, refreshTodoList}: Props) => {
     const [isPopupOpen, setIsPopupOpen] = useState<Record<string,boolean>>({});
+    const [todoItemId, setTodoItemId] = useState<string | number>('');
+    const [modalOpen, setModalOpen] = useState(false);
 
     const handlePopUpToggle = (index: number) =>{
         setIsPopupOpen((prev)=>({
@@ -20,6 +28,11 @@ const StatusDiv = ({status, data, setStatusUpdate}: Props) => {
             [index]: !prev[index]
         }))
     };
+
+    const updateTodo = (id: string | number) => {
+        setTodoItemId(id);
+        setModalOpen(true);
+    }
 
     const updateStatus = ( id: string | number ) =>{
         try{
@@ -53,7 +66,7 @@ const StatusDiv = ({status, data, setStatusUpdate}: Props) => {
                     {
                         isPopupOpen[index] ? 
                         <div className={`bg-white p-2 absolute top-[25px] -right-[5px] shadow-md flex flex-col ${styles.list_popup}`} onClick={()=> handlePopUpToggle(index)}>
-                            <span>Edit</span>
+                            <span onClick={() => updateTodo(list.id)}>Edit</span>
                             {
                                 !list.completed ?
                                 <span onClick={() => updateStatus(list.id)}>Mark as done</span>
@@ -69,7 +82,7 @@ const StatusDiv = ({status, data, setStatusUpdate}: Props) => {
                         <span>{list.description || 'Nil'}</span><br />
                         <span className='flex gap-[5px] items-center'>
                             <SlCalender />
-                            <span className='font-semibold'>{list.date}</span>
+                            <span className='font-semibold'>{formatToLongDate(list.date)}</span>
                         </span>
                         <span className='pt-4 text-[14px] text-theme-orange'>#{list.category}</span>
                     </li>
@@ -79,6 +92,10 @@ const StatusDiv = ({status, data, setStatusUpdate}: Props) => {
             <div className='h-[200px] flex items-center justify-center'>No list found</div>
             }
         </div>
+        
+        <Overlay isOpen={modalOpen}>
+            <TodoFormModal setModalOpen={setModalOpen} todoItemId={todoItemId} refreshTodoList={refreshTodoList} />
+        </Overlay>
     </div>
   )
 }

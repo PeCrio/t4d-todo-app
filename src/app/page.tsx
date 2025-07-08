@@ -5,43 +5,63 @@ import { dummyData } from "@/data/dummy-list";
 import { useEffect, useState } from "react";
 import { IListStructure } from "@/types/ListTypes";
 import StatusDiv from "@/components/StatusDiv";
-import AddTodoList from "@/components/AddTodoList";
+import TodoFormModal from "@/components/TodoFormModal";
 import Overlay from "@/components/Overlay";
 import { LocalStorageService } from "@/utils/LocalStorageService";
+
 export default function Home() {
   const [statusUpdate, setStatusUpdate] = useState(false);
   const [completed, setCompleted] = useState<IListStructure[]>([]);
   const [todo, setTodo] = useState<IListStructure[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
+  // const [todoList, setTodoList] = useState<IListStructure[]>([]);
 
   useEffect(() => {
     const existing = LocalStorageService.get<IListStructure[]>();
 
+    setPageLoading(true);
     if (!existing || existing.length === 0) {
-      setPageLoading(true);
       setTimeout(() => {
         LocalStorageService.set(dummyData);
-        setPageLoading(false);
+        // setTodoList(dummyData);
+        setTodo(dummyData.filter((list)=> !list.completed));
+        setCompleted(dummyData.filter((list)=> list.completed));
       }, 1200);
-    }
-  }, []);
-  
-  useEffect(()=>{
-    setPageLoading(true);
-    try{
+    } else {
       setTimeout(()=>{
-        const locallySavedData = LocalStorageService.get<IListStructure[]>();
-        if(locallySavedData){
-          setCompleted(locallySavedData.filter((list)=> list.completed));
-          setTodo(locallySavedData.filter((list)=> !list.completed));
-        }
-        setPageLoading(false);
+        // setTodoList(existing);
+        setTodo(existing.filter((list)=> !list.completed));
+        setCompleted(existing.filter((list)=> list.completed));
       }, 1200)
-    }catch(err){
-      console.log(err)
+      setPageLoading(false);
     }
-  },[modalOpen, statusUpdate])
+  }, [modalOpen, statusUpdate]);
+  
+  
+  const refreshTodoList = () => {
+    const data = LocalStorageService.get<IListStructure[]>() || [];
+    // setTodoList(data);
+    setTodo(data.filter((list)=> !list.completed));
+    setCompleted(data.filter((list)=> list.completed));
+  };
+  // useEffect(()=>{
+  //   setPageLoading(true);
+  //   try{
+  //     setTimeout(()=>{
+  //       const locallySavedData = LocalStorageService.get<IListStructure[]>();
+        
+  //       if(locallySavedData){
+  //         setCompleted(locallySavedData.filter((list)=> list.completed));
+  //         setTodo(locallySavedData.filter((list)=> !list.completed));
+  //       }
+  //       setPageLoading(false);
+  //     }, 1200)
+  //   }catch(err){
+  //     console.log(err)
+  //   }
+  // },[modalOpen, statusUpdate]);
+
   return (
     <div className="">
       <main className="py-4">
@@ -66,14 +86,14 @@ export default function Home() {
             </div>
             :
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
-              <StatusDiv data={todo} status="Todo" setStatusUpdate={setStatusUpdate}/>
-              <StatusDiv data={completed} status="Completed" setStatusUpdate={setStatusUpdate}/>
+              <StatusDiv data={todo} status="Todo" setStatusUpdate={setStatusUpdate} refreshTodoList={refreshTodoList} />
+              <StatusDiv data={completed} status="Completed" setStatusUpdate={setStatusUpdate} refreshTodoList={refreshTodoList} />
             </div>
           }
         </div>
       </main>
       <Overlay isOpen={modalOpen}>
-        <AddTodoList setModalOpen={setModalOpen} />
+        <TodoFormModal setModalOpen={setModalOpen} refreshTodoList={refreshTodoList} />
       </Overlay>
     </div>
   );
