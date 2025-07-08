@@ -9,9 +9,10 @@ interface TodoFormModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
   todoItemId?: string | number;
   refreshTodoList: () => void;
+  edit?: boolean;
 }
 
-const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList }: TodoFormModalProps) => {
+const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: TodoFormModalProps) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
@@ -23,12 +24,13 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList }: TodoFormMo
 
     useEffect(() => {
         const preExistingData = LocalStorageService.get<IListStructure[]>();
-
+        console.log(preExistingData?.find(item => item.id === todoItemId))
         if (todoItemId) {
             const currentTodoItem = preExistingData?.find(item => item.id === todoItemId);
+            const isoDateFormat = currentTodoItem ? new Date(currentTodoItem?.date).toISOString().split('T')[0] : ''
             setName(currentTodoItem?.name || '')
             setDescription(currentTodoItem?.description || '')
-            setDate(currentTodoItem ? currentTodoItem?.date : '')
+            setDate(isoDateFormat)
             setCategory(currentTodoItem?.category || '')
         }
     }, [todoItemId]);
@@ -50,7 +52,15 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList }: TodoFormMo
                 completed: false,
             };
 
-            if (!todoItemId) {
+            if (todoItemId) {
+                const updatedList = (preExistingData || []).map(item =>
+                  item.id === todoItemId
+                    ? { ...item, ...data }
+                    : item
+                );
+              
+                LocalStorageService.set(updatedList);
+            } else {
                 const payload = {
                   ...data,
                   id
@@ -59,15 +69,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList }: TodoFormMo
                 LocalStorageService.set([
                   ...(preExistingData || []),
                   payload,
-                ]);
-            } else {
-                const updatedList = (preExistingData || []).map(item =>
-                  item.id === todoItemId
-                    ? { ...item, ...data }
-                    : item
-                );
-              
-                LocalStorageService.set(updatedList);
+                ]);  
             }
 
             setModalOpen(false);
@@ -85,7 +87,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList }: TodoFormMo
             <div className='-top-[20px] -right-[40px] absolute' onClick={() => setModalOpen(false)}>
                 <MdOutlineCancel className='text-[28px] text-theme-blue cursor-pointer bg-white rounded-full'/>
             </div>
-            <p className='text-theme-blue font-semibold border-b px-6 py-4'>Add Todo List</p>
+            <p className='text-theme-blue font-semibold border-b px-6 py-4'>{ `${edit ? 'Edit' : 'Add'} Todo List`} </p>
             <form className='p-6' onSubmit={handleSubmit}>
                 <div className='flex flex-col gap-[20px]'>
                     <div className='w-full flex flex-col'>

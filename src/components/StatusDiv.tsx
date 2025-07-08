@@ -1,7 +1,7 @@
 "use client";
 
 import { IListStructure } from '@/types/ListTypes'
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import { SlCalender } from "react-icons/sl";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import styles from './styles.module.css';
@@ -13,11 +13,10 @@ import { formatToLongDate } from '@/utils/Formatters';
 interface Props {
     data: IListStructure[];
     status: string;
-    setStatusUpdate: Dispatch<SetStateAction<boolean>>;
     refreshTodoList: () => void;
 }
 
-const StatusDiv = ({status, data, setStatusUpdate, refreshTodoList}: Props) => {
+const StatusDiv = ({status, data, refreshTodoList}: Props) => {
     const [isPopupOpen, setIsPopupOpen] = useState<Record<string,boolean>>({});
     const [todoItemId, setTodoItemId] = useState<string | number>('');
     const [modalOpen, setModalOpen] = useState(false);
@@ -43,14 +42,10 @@ const StatusDiv = ({status, data, setStatusUpdate, refreshTodoList}: Props) => {
             }
             return list;
             });
-            setStatusUpdate(true);
+            refreshTodoList()
             LocalStorageService.set(updatedLists);
         }catch(err){
             console.log(err)
-        }finally{
-            setTimeout(()=>{
-                setStatusUpdate(false);
-            },1000)
         }
     }
   return (
@@ -94,7 +89,7 @@ const StatusDiv = ({status, data, setStatusUpdate, refreshTodoList}: Props) => {
         </div>
         
         <Overlay isOpen={modalOpen}>
-            <TodoFormModal setModalOpen={setModalOpen} todoItemId={todoItemId} refreshTodoList={refreshTodoList} />
+            <TodoFormModal setModalOpen={setModalOpen} todoItemId={todoItemId} edit={true} refreshTodoList={refreshTodoList} />
         </Overlay>
     </div>
   )
