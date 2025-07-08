@@ -115,8 +115,8 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                         </div>
                     </div>
                     <div className='flex gap-[5px]'>
-                        <input type='checkbox' id='subtask' />
-                        <label className='text-[15px] cursor-pointer' htmlFor='subtask'>Has Subtasks?</label>
+                        <input type='checkbox' id={`subtask-${edit ? 'edit' : ''}`} name='subtask' />
+                        <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${edit ? 'edit' : ''}`}>Has Subtasks?</label>
                     </div>
                 </div>
                 <div className='flex justify-end w-full pt-4'>
