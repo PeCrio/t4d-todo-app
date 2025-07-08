@@ -17,6 +17,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
     const [category, setCategory] = useState('');
+    const [isFormValid, setIsFormValid] = useState(false);
     // const [subTasks, setSubTasks] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -81,6 +82,11 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
         }
     }
 
+    useEffect(()=>{
+        setIsFormValid(date !== '' && name.trim() !== '' ? true : false);
+    },[name, date])
+
+
   return (
     <div className='h-full flex items-center justify-center'>
         <div className='bg-white max-h-[80%] max-w-[600px] w-full rounded-md relative'>
@@ -91,7 +97,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
             <form className='p-6' onSubmit={handleSubmit}>
                 <div className='flex flex-col gap-[20px]'>
                     <div className='w-full flex flex-col'>
-                        <span className='pb-1'>Name</span>
+                        <span className='pb-1'>Name<span className='text-red-500'>*</span></span>
                         <input type='text' value={name} placeholder='Enter Name' className='inputDiv' onChange={(e)=> setName(e.target.value)} />
                     </div>
                     <div className='w-full flex flex-col'>
@@ -100,7 +106,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                     </div>
                     <div className='flex gap-[20px] w-full'>
                         <div className='flex flex-col w-full'>
-                            <span>Due Date</span>
+                            <span>Due Date<span className='text-red-500'>*</span></span>
                             <input type='date' value={date} className='inputDiv' onChange={(e)=> setDate(e.target.value)}/>
                         </div>
                         <div className='flex flex-col w-full'>
@@ -114,7 +120,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                     </div>
                 </div>
                 <div className='flex justify-end w-full pt-4'>
-                    <button className='bg-theme-blue px-4 py-2 rounded-md text-white text-[14px] cursor-pointer'>
+                    <button className={`px-4 py-2 rounded-md text-white text-[14px] ${isFormValid ? 'bg-theme-blue cursor-pointer' : 'bg-[#cac9c9] cursor-not-allowed'}`}>
                         { isLoading ? 'Loading...' : 'Save'}
                     </button>
                 </div>
