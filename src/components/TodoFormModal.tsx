@@ -36,7 +36,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                 const isoDateFormat = currentTodoItem ? new Date(currentTodoItem?.date).toISOString().split('T')[0] : ''
                 setSubTaskLength(currentTodoItem?.subTasks?.length ?? 1);
                 setHasSubTasks(currentTodoItem?.has_subtask);
-                setSubTasks(currentTodoItem?.subTasks ?? []);
+                setSubTasks(currentTodoItem?.subTasks ?? ['']);
                 setName(currentTodoItem?.name)
                 setDescription(currentTodoItem?.description)
                 setDate(isoDateFormat)
@@ -135,8 +135,8 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                             </div>
                         </div>
                         <div className='flex gap-[5px]'>
-                            <input type='checkbox' checked={hasSubTasks} onChange={(e) => setHasSubTasks(e.target.checked)} id={`subtask-${edit ? 'edit' : ''}`} name='subtask' />
-                            <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${edit ? 'edit' : ''}`}>Has Subtasks?</label>
+                            <input type='checkbox' checked={hasSubTasks} onChange={(e) => setHasSubTasks(e.target.checked)} id={`subtask-${edit ? 'edit' : ''}-${id}`} name='subtask' />
+                            <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${edit ? 'edit' : ''}-${id}`}>Has Subtasks?</label>
                         </div>
                         {
                             hasSubTasks ?
