@@ -28,18 +28,24 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
 
     useEffect(() => {
         const preExistingData = LocalStorageService.get<IListStructure[]>();
-        console.log(preExistingData?.find(item => item.id === todoItemId))
+        // console.log(preExistingData?.find(item => item.id === todoItemId))
+
         if (todoItemId) {
             const currentTodoItem = preExistingData?.find(item => item.id === todoItemId);
-            const isoDateFormat = currentTodoItem ? new Date(currentTodoItem?.date).toISOString().split('T')[0] : ''
-            setName(currentTodoItem?.name || '')
-            setDescription(currentTodoItem?.description || '')
-            setDate(isoDateFormat)
-            setCategory(currentTodoItem?.category || '')
+            if (currentTodoItem) {
+                const isoDateFormat = currentTodoItem ? new Date(currentTodoItem?.date).toISOString().split('T')[0] : ''
+                setSubTaskLength(currentTodoItem?.subTasks?.length ?? 1);
+                setHasSubTasks(currentTodoItem?.has_subtask);
+                setSubTasks(currentTodoItem?.subTasks ?? []);
+                setName(currentTodoItem?.name)
+                setDescription(currentTodoItem?.description)
+                setDate(isoDateFormat)
+                setCategory(currentTodoItem?.category)
+            }
         }
     }, [todoItemId]);
-
-
+    
+    
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!isFormValid) return;
