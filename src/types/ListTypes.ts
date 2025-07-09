@@ -7,4 +7,5 @@ export type IListStructure = {
     has_subtask: boolean;
     completed: boolean;
     id: number | string;
+    subTasks?: string[];
 }

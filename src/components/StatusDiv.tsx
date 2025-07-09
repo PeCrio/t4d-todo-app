@@ -79,6 +79,15 @@ const StatusDiv = ({status, data, refreshTodoList}: Props) => {
                             <SlCalender />
                             <span className='font-semibold'>{formatToLongDate(list.date)}</span>
                         </span>
+                        <ul>
+                            {
+                                list.has_subtask ?
+                                list.subTasks?.map((list, index)=>(
+                                    <li key={index} className='list-disc ml-5'>{list}</li>
+                                ))
+                                : <></>
+                            }
+                        </ul>
                         <span className='pt-4 text-[14px] text-theme-orange'>#{list.category}</span>
                     </li>
                 </ul>
