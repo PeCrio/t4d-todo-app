@@ -31,13 +31,13 @@ const CategoryItem = ({ label, onClick }: CategoryItemProps) => (
 const SideBar = ({ toggleSidebar }: SideBarProps) => {
   return (
     <aside className="p-4 h-full flex flex-col">
-      <div className="flex justify-between items-center mb-4 text-[#f1884d]">
+      <div className="flex justify-between items-center mb-4 text-theme-orange">
         <h2 className="text-xl font-bold">Categories</h2>
         <button
           onClick={toggleSidebar}
           className="lg:hidden p-2 focus:outline-none"
         >
-          <FaTimes className="text-xl text-[#f1884d]" />
+          <FaTimes className="text-xl text-theme-orange" />
         </button>
       </div>
       <ul className="list-none p-0 m-0 flex-grow overflow-y-auto">
