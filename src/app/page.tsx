@@ -44,7 +44,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <main className="w-full py-4">
         <div className="flex justify-end">
           <div className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95" onClick={()=>setModalOpen(true)}>

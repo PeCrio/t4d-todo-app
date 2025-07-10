@@ -17,22 +17,24 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen w-full">
       {/* Navbar */}
-      <NavBar toggleSidebar={toggleSidebar} />
+      <div className="sticky top-0 z-[10]">
+        <NavBar toggleSidebar={toggleSidebar} />
+      </div>
 
       {/* Main Layout Container */}
 
-      <div className="flex flex-1 pt-[64px]">
+      <div className="pt-[70px]">
         {/* Sidebar Container */}
         <div
           className={`
-            fixed top-0 left-0 h-screen w-64 bg-theme-blue border-r border-gray-700
-            transition-transform duration-300 ease-in-out z-40 
+            fixed top-[80px] left-0 h-screen w-64 bg-theme-blue border-r border-gray-700
+            transition-transform duration-300 ease-in-out z-[2]
             ${
               isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             }             
-            lg:translate-x-0 lg:static lg:h-auto lg:w-[260px] lg:flex-shrink-0 lg:border-r            pt-[64px] 
+            lg:translate-x-0 lg:w-[260px] lg:flex-shrink-0 lg:border-r pt-[64px] 
             lg:pt-0
             overflow-y-auto 
           `}
@@ -54,7 +56,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
         {/*Main Content Area */}
         <main
           className={`
-            w-full flex-1 p-4 transition-all duration-300 ease-in-out
+            p-4 transition-all duration-300 ease-in-out ml-[280px]
             lg:p-8
           `}
         >

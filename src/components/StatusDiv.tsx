@@ -113,9 +113,12 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
                     <></>
                   )}
                 </ul>
-                <span className="pt-4 text-[14px] text-theme-orange">
-                  #{list.category}
-                </span>
+                {
+                  list.category && 
+                  <span className="pt-4 text-[14px] text-theme-orange">
+                    #{list.category}
+                  </span>
+                }
               </li>
             </ul>
           ))
