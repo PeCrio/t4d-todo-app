@@ -24,6 +24,8 @@ const CategoryItem = ({ label, onClick }: CategoryItemProps) => (
   </li>
 );
 
+
+
 const SideBar = ({ toggleSidebar }: SideBarProps) => {
   const [categories, setCategories] = useState([''])
   const [isLoading, setIsLoading] = useState(true);
@@ -73,4 +75,4 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
   );
 };
 
-export default SideBar;
+export default SideBar

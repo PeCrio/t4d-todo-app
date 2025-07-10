@@ -1,9 +1,9 @@
-import React from "react";
 import { FaBars } from "react-icons/fa";
 
 interface NavBarProps {
   toggleSidebar: () => void;
 }
+
 
 const NavBar = ({ toggleSidebar }: NavBarProps) => {
   return (

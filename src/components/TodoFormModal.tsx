@@ -112,7 +112,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
             <div className='-top-[20px] -right-[40px] absolute' onClick={() => setModalOpen(false)}>
                 <MdOutlineCancel className='text-[28px] text-theme-blue cursor-pointer bg-white rounded-full'/>
             </div>
-            <div className='bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll'>
+            <div className='bg-white w-full max-h-[80vh] rounded-md relative overflow-scroll'>
                 <p className='text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white'>{ `${edit ? 'Edit' : 'Add'} Todo List`} </p>
                 <form className='p-6' onSubmit={handleSubmit}>
                     <div className='flex flex-col gap-[20px]'>
