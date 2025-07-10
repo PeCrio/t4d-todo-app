@@ -19,7 +19,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
   return (
     <div className="min-h-screen w-full">
       {/* Navbar */}
-      <div className="sticky top-0 z-[10]">
+      <div className="sticky top-0 z-[100]">
         <NavBar toggleSidebar={toggleSidebar} />
       </div>
 
@@ -30,7 +30,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
         <div
           className={`
             fixed top-[40px] lg:top-[80px] left-0 h-screen w-64 bg-theme-blue border-r border-gray-700
-            transition-transform duration-300 ease-in-out z-[2]
+            transition-transform duration-300 ease-in-out z-[10]
             ${
               isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             }             
@@ -48,7 +48,7 @@ const LayoutWrapper = ({ children }: LayoutWrapperProps) => {
         {/* Overlay for mobile when sidebar is open */}
         {isSidebarOpen && (
           <div
-            className="fixed inset-0 glassy-card z-[1] lg:hidden" 
+            className="fixed inset-0 glassy-card z-[2] lg:hidden" 
             onClick={toggleSidebar}
           ></div>
         )}

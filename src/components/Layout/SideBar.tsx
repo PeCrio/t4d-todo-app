@@ -5,6 +5,8 @@ import { IListStructure } from '@/types/ListTypes';
 import { LocalStorageService } from '@/utils/LocalStorageService';
 import { useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
+import { RxReset } from "react-icons/rx";
+
 interface SideBarProps {
   toggleSidebar: () => void;
   isSidebarOpen: boolean;
@@ -13,11 +15,12 @@ interface SideBarProps {
 interface CategoryItemProps {
   label: string;
   onClick?: () => void;
+  activeCategory?: string | null;
 }
 
-const CategoryItem = ({ label, onClick }: CategoryItemProps) => (
+const CategoryItem = ({ label, onClick, activeCategory }: CategoryItemProps) => (
   <li
-    className="p-4 text-white cursor-pointer border-b border-gray-700 hover:bg-gray-800 transition-colors duration-200"
+    className={`p-4 text-white cursor-pointer border-b border-gray-700 transition-colors duration-200 ${activeCategory === label ? 'bg-theme-orange' : 'hover:bg-gray-800'}`}
     onClick={onClick}
   >
     {label}
@@ -29,7 +32,7 @@ const CategoryItem = ({ label, onClick }: CategoryItemProps) => (
 const SideBar = ({ toggleSidebar }: SideBarProps) => {
   const [categories, setCategories] = useState([''])
   const [isLoading, setIsLoading] = useState(true);
-  const { setSelectedCategory } = useCategory();
+  const { setSelectedCategory, selectedCategory } = useCategory();
 
   const getTodoCategories = () => {
     setTimeout(()=>{
@@ -69,8 +72,14 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
         :
         <ul className="list-none p-0 m-0 flex-grow overflow-y-auto">
           {categories.map((category) => (
-            <CategoryItem key={category} label={category} onClick={()=>setSelectedCategory(category)}/>
+            <CategoryItem key={category} label={category} activeCategory={selectedCategory} onClick={()=>setSelectedCategory(category)}/>
           ))}
+          <div className='text-center'>
+            <button className='bg-white mt-5 px-4 flex items-center gap-[3px] m-auto cursor-pointer' onClick={()=>setSelectedCategory('')}>
+              <RxReset />
+              Reset
+            </button>
+          </div>
         </ul>
       }
     </aside>

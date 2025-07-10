@@ -1,4 +1,5 @@
 import React from 'react'
+import styles from './styles.module.css';
 
 interface IOverlayProp {
     children: React.ReactNode;
@@ -6,7 +7,7 @@ interface IOverlayProp {
 }
 const Overlay = ({ children, isOpen }: IOverlayProp) => {
   return (
-    <div className={`bg-overlay absolute top-0 z-[10] right-0 bottom-0 left-0 ${isOpen ? 'block h-[100vh] w-[100vw]' : 'hidden'}`}>
+    <div className={`bg-overlay fixed top-0 z-44 right-0 bottom-0 left-0 ${isOpen ? `block h-[100vh] w-[100vw] ${styles.overlay}` : 'hidden'}`}>
         {children}
     </div>
   )

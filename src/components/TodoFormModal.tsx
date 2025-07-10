@@ -14,14 +14,22 @@ interface TodoFormModalProps {
 }
 
 const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: TodoFormModalProps) => {
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [date, setDate] = useState('');
-    const [category, setCategory] = useState('');
     const [isFormValid, setIsFormValid] = useState(false);
-    const [hasSubTasks,setHasSubTasks] = useState(false);
     const [subTaskLength, setSubTaskLength] = useState(1);
-    const [subTasks, setSubTasks] = useState(['']);
+
+    const defaultFormState = {
+        name: '',
+        description: '',
+        date: '',
+        category: '',
+        hasSubTasks: false,
+        subTasks: [''],
+    };
+
+    const [form, setForm] = useState(defaultFormState);
+
+    const { name, description, date, category, hasSubTasks, subTasks } = form
+
     const [isLoading, setIsLoading] = useState(false);
 
     const id = crypto.randomUUID();
@@ -29,19 +37,13 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
 
     useEffect(() => {
         const preExistingData = LocalStorageService.get<IListStructure[]>();
-        // console.log(preExistingData?.find(item => item.id === todoItemId))
 
         if (todoItemId) {
             const currentTodoItem = preExistingData?.find(item => item.id === todoItemId);
             if (currentTodoItem) {
                 const isoDateFormat = currentTodoItem ? new Date(currentTodoItem?.date).toISOString().split('T')[0] : ''
                 setSubTaskLength(currentTodoItem?.subTasks?.length ?? 1);
-                setHasSubTasks(currentTodoItem?.has_subtask);
-                setSubTasks(currentTodoItem?.subTasks ?? ['']);
-                setName(currentTodoItem?.name)
-                setDescription(currentTodoItem?.description)
-                setDate(isoDateFormat)
-                setCategory(currentTodoItem?.category)
+                setForm(prev => ({ ...prev, name: currentTodoItem?.name, hasSubTasks: currentTodoItem?.has_subtask, subTasks: currentTodoItem?.subTasks ?? [''], description: currentTodoItem?.description, date: isoDateFormat, category: currentTodoItem?.category }));
             }
         }
     }, [todoItemId]);
@@ -84,6 +86,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
             }
 
             setModalOpen(false);
+            setForm(defaultFormState);
             refreshTodoList();
         }catch(e){
             console.log(e)
@@ -93,13 +96,13 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
     }
 
     useEffect(()=>{
-        setIsFormValid(date !== '' && name.trim() !== '' ? true : false);
-    },[name, date])
+        setIsFormValid(form.date !== '' && form.name.trim() !== '' ? true : false);
+    },[form.name, form.date])
 
     const addSubTasks = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const newSubTasks = [...subTasks];
         newSubTasks[index] = event.target.value;
-        setSubTasks(newSubTasks);
+        setForm((prev) => ({...prev, subTasks: newSubTasks}))
     }
 
     const removeSubTask = (index: number) =>{
@@ -119,24 +122,24 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                     <div className='flex flex-col gap-[20px]'>
                         <div className='w-full flex flex-col'>
                             <span className='pb-1'>Name<span className='text-red-500'>*</span></span>
-                            <input type='text' value={name} placeholder='Enter Name' className='inputDiv' onChange={(e)=> setName(e.target.value)} />
+                            <input type='text' value={name} placeholder='Enter Name' className='inputDiv' onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} />
                         </div>
                         <div className='w-full flex flex-col'>
                             <span className='pb-1'>Description</span>
-                            <textarea rows={4} value={description} placeholder='Enter Description' className='inputDiv' onChange={(e)=> setDescription(e.target.value)}></textarea>
+                            <textarea rows={4} value={description} placeholder='Enter Description' className='inputDiv' onChange={e => setForm(prev => ({ ...prev, description: e.target.value }))}></textarea>
                         </div>
                         <div className='flex gap-[20px] w-full'>
                             <div className='flex flex-col w-full'>
                                 <span>Due Date<span className='text-red-500'>*</span></span>
-                                <input type='date' value={date} className='inputDiv' onChange={(e)=> setDate(e.target.value)}/>
+                                <input type='date' value={date} className='inputDiv' onChange={e => setForm(prev => ({ ...prev, date: e.target.value }))}/>
                             </div>
                             <div className='flex flex-col w-full'>
                                 <span>Category</span>
-                                <input type='text' value={category} className='inputDiv' placeholder='Enter Category' onChange={(e)=> setCategory(e.target.value)}/>
+                                <input type='text' value={category} className='inputDiv' placeholder='Enter Category' onChange={e => setForm(prev => ({ ...prev, category: e.target.value }))}/>
                             </div>
                         </div>
                         <div className='flex gap-[5px]'>
-                            <input type='checkbox' checked={hasSubTasks} onChange={(e) => setHasSubTasks(e.target.checked)} id={`subtask-${domId}`} name='subtask' />
+                            <input type='checkbox' checked={hasSubTasks} onChange={e => setForm(prev => ({ ...prev, hasSubTasks: e.target.checked }))} id={`subtask-${domId}`} name='subtask' />
                             <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${domId}`}>Has Subtasks?</label>
                         </div>
                         {
@@ -147,7 +150,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                                     <input type='text' value={subTasks[index]} className='inputDiv w-full' placeholder='Enter SubTask' onChange={(e)=>addSubTasks(index, e)} />
                                     {
                                         index === 0 ?
-                                        <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>{setSubTaskLength((prev)=>prev + 1); setSubTasks((prev) => [...prev, '']);}}><MdAdd /></div>
+                                        <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>{setSubTaskLength((prev)=>prev + 1); setForm((prev)=> ({...prev, subTasks:[...prev.subTasks, '']}))}}><MdAdd /></div>
                                         :
                                         <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>removeSubTask(index)}><FiMinus /></div>
                                     }

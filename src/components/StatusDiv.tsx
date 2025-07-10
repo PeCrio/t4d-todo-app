@@ -74,7 +74,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
               </span>
               {isPopupOpen[index] ? (
                 <div
-                  className={`bg-white p-2 absolute top-[25px] -right-[5px] shadow-md flex flex-col ${styles.list_popup}`}
+                  className={`bg-white p-2 absolute z-[1] top-[25px] -right-[5px] shadow-md flex flex-col ${styles.list_popup}`}
                   onClick={() => handlePopUpToggle(index)}
                 >
                   <span onClick={() => updateTodo(list.id)}>Edit</span>

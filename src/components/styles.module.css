@@ -6,3 +6,7 @@
 .list_popup span:hover{
     color: var(--color-theme-orange);
 }
+
+body:has(.overlay){
+    overflow: hidden;
+}

@@ -44,7 +44,7 @@
   font-weight: 600;
   color: var(--color-theme-blue);
   cursor: pointer;
-  max-width: 250px;
+  max-width: 280px;
 }
 
 .todo-task-div span:hover{
