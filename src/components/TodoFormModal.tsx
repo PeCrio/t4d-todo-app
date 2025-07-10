@@ -24,7 +24,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
     const [subTasks, setSubTasks] = useState(['']);
     const [isLoading, setIsLoading] = useState(false);
 
-    const id = useId();
+    const id = crypto.randomUUID();
 
     useEffect(() => {
         const preExistingData = LocalStorageService.get<IListStructure[]>();
