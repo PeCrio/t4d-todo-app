@@ -104,4 +104,5 @@ const StatusDiv = ({status, data, refreshTodoList}: Props) => {
   )
 }
 
-export default StatusDiv
+export default StatusDiv;
+
