@@ -8,6 +8,7 @@ import StatusDiv from "@/components/StatusDiv";
 import TodoFormModal from "@/components/TodoFormModal";
 import Overlay from "@/components/Overlay";
 import { LocalStorageService } from "@/utils/LocalStorageService";
+import { useCategory } from "@/store/CategoryContext";
 
 export default function Home() {
   const [completed, setCompleted] = useState<IListStructure[]>([]);
@@ -16,20 +17,24 @@ export default function Home() {
   const [pageLoading, setPageLoading] = useState(true);
   const [allTodoList, setAllTodoList] = useState<IListStructure[]>([]);
 
+  const { selectedCategory } = useCategory();
   useEffect(() => {
     const existing = LocalStorageService.get<IListStructure[]>();
     if (!existing || existing.length === 0) {
       LocalStorageService.set(dummyData);
     }
-    refreshTodoList();
   }, []);
+
+  useEffect(()=>{
+    refreshTodoList();
+  },[selectedCategory])
   
   
   const refreshTodoList = () => {
     setPageLoading(true);
     setTimeout(() => {
       try {
-        const locallySavedData = LocalStorageService.get<IListStructure[]>();
+        const locallySavedData = selectedCategory ? LocalStorageService.get<IListStructure[]>()?.filter((list)=> list.category == selectedCategory) : LocalStorageService.get<IListStructure[]>();
         if (locallySavedData) {
           setAllTodoList(locallySavedData);
           setCompleted(locallySavedData.filter((list) => list.completed));

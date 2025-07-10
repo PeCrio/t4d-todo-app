@@ -9,3 +9,8 @@ export type IListStructure = {
     id: number | string;
     subTasks?: string[];
 }
+
+export type ICategoryContext = {
+    selectedCategory: string | null;
+    setSelectedCategory: (category: string) => void;
+}

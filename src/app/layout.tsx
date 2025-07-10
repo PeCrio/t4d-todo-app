@@ -2,6 +2,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import LayoutWrapper from "@/components/Layout/LayoutWrapper";
+import { CategoryProvider } from "@/store/CategoryContext";
 
 
 export const metadata: Metadata = {
@@ -17,9 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`antialiased relative h-screen flex flex-col lg:flex-row`}>
-        <LayoutWrapper>
-          {children}
-        </LayoutWrapper>
+        <CategoryProvider>
+          <LayoutWrapper>
+            {children}
+          </LayoutWrapper>
+        </CategoryProvider>
       </body>
     </html>
   );

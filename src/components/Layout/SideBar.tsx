@@ -1,10 +1,10 @@
 
 "use client";
+import { useCategory } from '@/store/CategoryContext';
 import { IListStructure } from '@/types/ListTypes';
 import { LocalStorageService } from '@/utils/LocalStorageService';
 import { useEffect, useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
-
 interface SideBarProps {
   toggleSidebar: () => void;
   isSidebarOpen: boolean;
@@ -29,6 +29,8 @@ const CategoryItem = ({ label, onClick }: CategoryItemProps) => (
 const SideBar = ({ toggleSidebar }: SideBarProps) => {
   const [categories, setCategories] = useState([''])
   const [isLoading, setIsLoading] = useState(true);
+  const { setSelectedCategory } = useCategory();
+
   const getTodoCategories = () => {
     setTimeout(()=>{
       const getAllTodos = LocalStorageService.get() as IListStructure[];
@@ -67,7 +69,7 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
         :
         <ul className="list-none p-0 m-0 flex-grow overflow-y-auto">
           {categories.map((category) => (
-            <CategoryItem key={category} label={category} />
+            <CategoryItem key={category} label={category} onClick={()=>setSelectedCategory(category)}/>
           ))}
         </ul>
       }
