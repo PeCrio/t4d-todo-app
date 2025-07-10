@@ -25,6 +25,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
     const [isLoading, setIsLoading] = useState(false);
 
     const id = crypto.randomUUID();
+    const domId = useId();
 
     useEffect(() => {
         const preExistingData = LocalStorageService.get<IListStructure[]>();
@@ -135,8 +136,8 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, edit }: Todo
                             </div>
                         </div>
                         <div className='flex gap-[5px]'>
-                            <input type='checkbox' checked={hasSubTasks} onChange={(e) => setHasSubTasks(e.target.checked)} id={`subtask-${edit ? 'edit' : ''}-${id}`} name='subtask' />
-                            <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${edit ? 'edit' : ''}-${id}`}>Has Subtasks?</label>
+                            <input type='checkbox' checked={hasSubTasks} onChange={(e) => setHasSubTasks(e.target.checked)} id={`subtask-${domId}`} name='subtask' />
+                            <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${domId}`}>Has Subtasks?</label>
                         </div>
                         {
                             hasSubTasks ?

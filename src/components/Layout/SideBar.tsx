@@ -54,7 +54,7 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
         <h2 className="text-xl font-bold">Categories</h2>
         <button
           onClick={toggleSidebar}
-          className="lg:hidden p-2 focus:outline-none"
+          className="lg:hidden p-2 focus:outline-none cursor-pointer"
         >
           <FaTimes className="text-xl text-theme-orange" />
         </button>

@@ -67,7 +67,7 @@ export default function Home() {
             </div>
             : allTodoList && allTodoList.length > 0
             ?
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-[20px]">
               <StatusDiv data={todo} status="Todo" refreshTodoList={refreshTodoList} />
               <StatusDiv data={completed} status="Completed" refreshTodoList={refreshTodoList} />
             </div>

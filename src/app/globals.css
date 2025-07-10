@@ -15,9 +15,19 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
+.glassy-card {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
 .todo-task-div {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  /* display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr; */
   gap: 20px;
   padding-top: 20px;
 }
@@ -34,6 +44,7 @@
   font-weight: 600;
   color: var(--color-theme-blue);
   cursor: pointer;
+  max-width: 250px;
 }
 
 .todo-task-div span:hover{
@@ -50,11 +61,21 @@
 
 @media screen and (max-width: 1032px) {
   .todo-task-div{
-    grid-template-columns: 1fr 1fr;
+    display: flex;
   }
 }
 
 @media screen and (max-width: 760px) {
+  .todo-task-div{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .todo-task-div span{
+    max-width: none;
+  }
+}
+
+@media screen and (max-width: 400px) {
   .todo-task-div{
     grid-template-columns: 1fr;
   }
