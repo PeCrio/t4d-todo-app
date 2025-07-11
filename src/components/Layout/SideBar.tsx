@@ -75,7 +75,7 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
             <CategoryItem key={category} label={category} activeCategory={selectedCategory} onClick={()=>setSelectedCategory(category)}/>
           ))}
           <div className='text-center'>
-            <button className='bg-white mt-5 px-4 flex items-center gap-[3px] m-auto cursor-pointer' onClick={()=>setSelectedCategory('')}>
+            <button className='bg-white rounded-[3px] mt-5 px-4 flex items-center gap-[3px] m-auto cursor-pointer' onClick={()=>setSelectedCategory('')}>
               <RxReset />
               Reset
             </button>

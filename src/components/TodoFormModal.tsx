@@ -45,7 +45,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
             if (currentTodoItem) {
                 const isoDateFormat = currentTodoItem ? new Date(currentTodoItem?.date).toISOString().split('T')[0] : ''
                 setSubTaskLength(currentTodoItem?.subTasks?.length ?? 1);
-                setForm(prev => ({ ...prev, name: currentTodoItem?.name, hasSubTasks: currentTodoItem?.has_subtask, subTasks: currentTodoItem?.subTasks ?? [''], description: currentTodoItem?.description, date: isoDateFormat, category: currentTodoItem?.category }));
+                setForm(prev => ({ ...prev, name: currentTodoItem?.name, completed: currentTodoItem?.completed, hasSubTasks: currentTodoItem?.has_subtask, subTasks: currentTodoItem?.subTasks ?? [''], description: currentTodoItem?.description, date: isoDateFormat, category: currentTodoItem?.category }));
             }
         }
     }, [todoItemId]);
@@ -53,6 +53,9 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
     
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        const preExistingData = LocalStorageService.get<IListStructure[]>();
+        const currentTodoItem = preExistingData?.find(item => item.id === todoItemId);
+        
         if (!isFormValid) return;
         try{
             setIsLoading(true);
@@ -63,7 +66,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                 date,
                 category,
                 has_subtask: hasSubTasks,
-                completed: false,
+                completed: todoItemId ? currentTodoItem?.completed : false,
                 ...(hasSubTasks && { subTasks })
             };
 
@@ -75,7 +78,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                 );
               
                 LocalStorageService.set(updatedList);
-                toast.success("Successfully updated a To-do item.");
+                toast.success("Successfully updated To-do item.");
             } else {
                 const payload = {
                   ...data,
@@ -86,7 +89,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                   ...(preExistingData || []),
                   payload,
                 ]);  
-                toast.success("Successfully added a To-do item.");
+                toast.success("Successfully added To-do item.");
             }
             
             setModalOpen(false);
