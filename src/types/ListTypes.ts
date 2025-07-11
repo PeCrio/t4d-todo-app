@@ -14,3 +14,8 @@ export type ICategoryContext = {
     selectedCategory: string | null;
     setSelectedCategory: (category: string) => void;
 }
+
+export type IFilterContextType = {
+    selectedFilterQuery: string | null;
+    setSelectedFilterQuery: (query: string) => void;
+}

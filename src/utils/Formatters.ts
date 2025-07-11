@@ -31,3 +31,7 @@ export function convertLongDateToISO(longDate: string): string {
   
     return `${year}-${month}-${day}`;
 }
+
+export function getISODateFormat(date: string | Date){
+  return new Date(date).toISOString().split("T")[0]
+}

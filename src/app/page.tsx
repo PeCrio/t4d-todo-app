@@ -9,6 +9,8 @@ import TodoFormModal from "@/components/TodoFormModal";
 import Overlay from "@/components/Overlay";
 import { LocalStorageService } from "@/utils/LocalStorageService";
 import { useCategory } from "@/store/CategoryContext";
+import { useFilter } from "@/store/FilterContext";
+import { getISODateFormat } from "@/utils/Formatters";
 
 export default function Home() {
   const [completed, setCompleted] = useState<IListStructure[]>([]);
@@ -17,6 +19,7 @@ export default function Home() {
   const [pageLoading, setPageLoading] = useState(true);
   const [allTodoList, setAllTodoList] = useState<IListStructure[]>([]);
   const [mode, setMode] = useState<'add' | 'edit' | 'delete'>('add');
+  const { setSelectedFilterQuery, selectedFilterQuery } = useFilter();
 
   const { selectedCategory } = useCategory();
   useEffect(() => {
@@ -33,9 +36,23 @@ export default function Home() {
       try {
         const stored = LocalStorageService.get<IListStructure[]>() ?? [];
 
-        const locallySavedData = selectedCategory
-          ? stored.filter((list) => list.category === selectedCategory)
-          : stored;
+        let locallySavedData = stored;
+
+        if (selectedCategory) {
+          locallySavedData = locallySavedData.filter((list) => list.category === selectedCategory);
+        }
+
+        if (selectedFilterQuery) {
+          const today = getISODateFormat(new Date());
+
+          if (selectedFilterQuery.toLowerCase() === 'today') {
+            locallySavedData = locallySavedData.filter((list) => getISODateFormat(list.date) === today);
+          } else if (selectedFilterQuery.toLowerCase() === 'past due-date') {
+            locallySavedData = locallySavedData.filter((list) => getISODateFormat(list.date) < today);
+          } else if (selectedFilterQuery.toLowerCase() === 'pending') {
+            locallySavedData = locallySavedData.filter((list) => !list.completed);
+          }
+        }
 
         if (locallySavedData) {
           setAllTodoList(locallySavedData);
@@ -48,7 +65,7 @@ export default function Home() {
         setPageLoading(false);
       }
     }, 500);
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedFilterQuery]);
   
   useEffect(()=>{
     refreshTodoList();
@@ -59,7 +76,7 @@ export default function Home() {
     setModalOpen(true);
   }
   
-
+  const queries = ['Today', 'Pending', 'All Tasks', 'Past Due-Date']
   return (
     <div className="w-full">
       <main className="w-full py-4">
@@ -70,10 +87,11 @@ export default function Home() {
           </div>
         </div>
         <div className="flex items-center justify-between todo-task-div">
-          <span>Today</span>
-          <span>Pending</span>
-          <span>All Tasks</span>
-          <span>Past Due-Date</span>
+          {
+            queries.map((query)=>(
+              <span key={query} onClick={() => setSelectedFilterQuery(query)} className={`${query.toLowerCase() == selectedFilterQuery?.toLowerCase() ? 'text-theme-orange font-semibold' : 'text-theme-blue'}`}>{query}</span>
+            ))
+          }
         </div>
         <div>
           <p className="text-xl text-theme-blue font-semibold py-4">Todo Lists</p>
