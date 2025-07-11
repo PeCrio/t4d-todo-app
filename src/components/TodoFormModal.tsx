@@ -100,8 +100,9 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
     }
 
     useEffect(()=>{
-        setIsFormValid(form.date !== '' && form.name.trim() !== '' ? true : false);
-    },[form.name, form.date])
+        const validSubTasks = form.subTasks.map((task)=> task.trim()).filter(Boolean)
+        setIsFormValid((!form.hasSubTasks || validSubTasks.length > 1) && form.date !== '' && form.name.trim() !== '' ? true : false);
+    },[form.name, form.date, form.hasSubTasks, form.subTasks])
 
     const addSubTasks = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
         const newSubTasks = [...subTasks];
@@ -137,9 +138,9 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
             </div>
 
             {(mode === "add" || mode === "edit") && 
-            <div className='bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll custom-scrollbar2'>
+            <div className='bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll'>
                 <p className='text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white'>{ `${mode === "edit" ? 'Edit' : 'Add'} Todo List`} </p>
-                <form className='p-6 h-[80vh] overflow-scroll custom-scrollbar2' onSubmit={handleSubmit}>
+                <form className='p-6 custom-scrollbar2' onSubmit={handleSubmit}>
                     <div className='flex flex-col gap-[20px]'>
                         <div className='w-full flex flex-col'>
                             <span className='pb-1'>Name<span className='text-red-500'>*</span></span>
@@ -160,9 +161,9 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                             </div>
                         </div>
                         <div className='flex items-center justify-between gap-[5px]'>
-                            <div className="flex items-center gap-5">
+                            <div className="flex items-center gap-[5px]">
                                 <input type='checkbox' className='rounded-md' checked={hasSubTasks} onChange={e => setForm(prev => ({ ...prev, hasSubTasks: e.target.checked }))} id={`subtask-${domId}`} name='subtask' />
-                                <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${domId}`}>Has Subtasks?</label>
+                                <label className='text-[15px] cursor-pointer' htmlFor={`subtask-${domId}`}>Has Subtasks? {hasSubTasks && <span className='text-red-500'>*</span>}</label>
                             </div>
                             {hasSubTasks && <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>{setSubTaskLength((prev)=>prev + 1); setForm((prev)=> ({...prev, subTasks:[...prev.subTasks, '']}))}}><MdAdd /></div>}
                         </div>
@@ -172,7 +173,10 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                             <div key={index}>
                                 <div className='flex items-center gap-[10px]'>
                                     <input type='text' value={subTasks[index]} className='inputDiv w-full rounded-md' placeholder='Enter SubTask' onChange={(e)=>addSubTasks(index, e)} />
-                                    <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>removeSubTask(index)}><FiMinus /></div>
+                                    {
+                                        index !== 0 &&
+                                        <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>removeSubTask(index)}><FiMinus /></div>
+                                    }
                                 </div>
                             </div>
                             ))
@@ -180,6 +184,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                             <></>
                         }
                     </div>
+                    <span className='text-[12px]'>(N:B: You have to fill all required <span className='text-red-500'>*</span> field to submit)</span>
                     <div className='flex justify-end w-full pt-4'>
                         <button className={`px-4 py-2 rounded-md text-white text-[14px] ${isFormValid ? 'bg-theme-blue cursor-pointer' : 'bg-[#cac9c9] cursor-not-allowed'}`}>
                             { isLoading ? 'Loading...' : 'Save'}

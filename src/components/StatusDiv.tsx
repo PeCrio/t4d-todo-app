@@ -63,7 +63,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
       <div className="border border-theme-blue rounded-md px-2 bg-[#e8e8e8]">
         {data.length > 0 ? (
           data?.map((item, index) => (
-            <ul key={index} className="p-2 bg-white my-3 relative rounded-md">
+            <ul key={index} className="p-2 pr-6 bg-white my-3 relative rounded-md">
               <span
                 className="absolute right-[5px] top-[8px] cursor-pointer p-1 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
                 onClick={() => handlePopUpToggle(index)}
@@ -72,20 +72,20 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
               </span>
               {isPopupOpen[index] ? (
                 <div
-                  className={`bg-white rounded-md p-2 absolute z-[1] top-[35px] -right-[5px] shadow-md flex flex-col ${styles.list_popup}`}
+                  className={`bg-white rounded-md px-4 p-2 absolute z-[1] top-[35px] -right-[5px] shadow-md gap-[5px] flex flex-col ${styles.list_popup}`}
                   onClick={() => handlePopUpToggle(index)}
                 >
-                  <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => updateTodo(item.id)}>Edit</div>
+                  <div className="cursor-pointer hover:text-[#f1884d] w-fit transition-all duration-300 ease-in-out" onClick={() => updateTodo(item.id)}>Edit</div>
                   {!item.completed ? (
                     <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => updateStatus(item.id)}>
                       Mark as done
                     </div>
                   ) : (
-                    <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => updateStatus(item.id)}>
+                    <div className="w-fit cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => updateStatus(item.id)}>
                       Unmark as done
                     </div>
                   )}
-                  <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => openDeleteModal(item.id)}>Delete</div>
+                  <div className="w-fit cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => openDeleteModal(item.id)}>Delete</div>
                 </div>
               ) : (
                 <></>
