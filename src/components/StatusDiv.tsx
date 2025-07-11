@@ -20,6 +20,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
   const [isPopupOpen, setIsPopupOpen] = useState<Record<string, boolean>>({});
   const [todoItemId, setTodoItemId] = useState<string | number>("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [mode, setMode] = useState<'add' | 'edit' | 'delete'>('add');
 
   const handlePopUpToggle = (index: number) => {
     setIsPopupOpen((prev) => ({
@@ -29,6 +30,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
   };
 
   const updateTodo = (id: string | number) => {
+    setMode('edit');
     setTodoItemId(id);
     setModalOpen(true);
   };
@@ -48,65 +50,61 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
       console.log(err);
     }
   };
-  const handleDelete = (id: string | number) => {
-    try {
-      const lists = LocalStorageService.get<IListStructure[]>() || [];
-      const updatedLists = lists.filter((list) => list.id !== id);
-      LocalStorageService.set(updatedLists);
-      refreshTodoList();
-    } catch (err) {
-      console.log(err);
-    }
-  };
+
+  const openDeleteModal = (id: string | number) => {
+    setTodoItemId(id);
+    setMode('delete');
+    setModalOpen(true);
+  }
 
   return (
     <div>
       <p className="pb-2">{status}</p>
       <div className="border border-theme-blue rounded-md px-2 bg-[#e8e8e8]">
         {data.length > 0 ? (
-          data?.map((list, index) => (
-            <ul key={index} className="p-2 bg-white my-3 relative">
+          data?.map((item, index) => (
+            <ul key={index} className="p-2 bg-white my-3 relative rounded-md">
               <span
-                className="absolute right-[5px] top-[10px] cursor-pointer"
+                className="absolute right-[5px] top-[8px] cursor-pointer p-1 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
                 onClick={() => handlePopUpToggle(index)}
               >
                 <HiOutlineDotsVertical />
               </span>
               {isPopupOpen[index] ? (
                 <div
-                  className={`bg-white p-2 absolute z-[1] top-[25px] -right-[5px] shadow-md flex flex-col ${styles.list_popup}`}
+                  className={`bg-white rounded-md p-2 absolute z-[1] top-[35px] -right-[5px] shadow-md flex flex-col ${styles.list_popup}`}
                   onClick={() => handlePopUpToggle(index)}
                 >
-                  <span onClick={() => updateTodo(list.id)}>Edit</span>
-                  {!list.completed ? (
-                    <span onClick={() => updateStatus(list.id)}>
+                  <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => updateTodo(item.id)}>Edit</div>
+                  {!item.completed ? (
+                    <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => updateStatus(item.id)}>
                       Mark as done
-                    </span>
+                    </div>
                   ) : (
-                    <span onClick={() => updateStatus(list.id)}>
+                    <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => updateStatus(item.id)}>
                       Unmark as done
-                    </span>
+                    </div>
                   )}
-                  <span onClick={() => handleDelete(list.id)}>Delete</span>
+                  <div className="w-full cursor-pointer hover:text-[#f1884d] transition-all duration-300 ease-in-out" onClick={() => openDeleteModal(item.id)}>Delete</div>
                 </div>
               ) : (
                 <></>
               )}
               <li>
-                <p className="font-semibold">{list.name}</p>
-                <span>{list.description || "Nil"}</span>
+                <p className="font-semibold">{item.name}</p>
+                <span>{item.description || "Nil"}</span>
                 <br />
                 <span className="flex gap-[5px] items-center">
                   <SlCalender />
                   <span className="font-semibold">
-                    {formatToLongDate(list.date)}
+                    {formatToLongDate(item.date)}
                   </span>
                 </span>
                 <ul>
-                  {list.has_subtask ? (
-                    list.subTasks?.map((list, index) => (
+                  {item.has_subtask ? (
+                    item.subTasks?.map((item, index) => (
                       <li key={index} className="list-disc ml-5">
-                        {list}
+                        {item}
                       </li>
                     ))
                   ) : (
@@ -114,9 +112,9 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
                   )}
                 </ul>
                 {
-                  list.category && 
+                  item.category && 
                   <span className="pt-4 text-[14px] text-theme-orange">
-                    #{list.category}
+                    #{item.category}
                   </span>
                 }
               </li>
@@ -133,8 +131,9 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
         <TodoFormModal
           setModalOpen={setModalOpen}
           todoItemId={todoItemId}
-          edit={true}
           refreshTodoList={refreshTodoList}
+          mode={mode}
+          setMode={setMode}
         />
       </Overlay>
     </div>

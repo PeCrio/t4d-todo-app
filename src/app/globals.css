@@ -121,3 +121,24 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* scrollbar */
+.custom-scrollbar2::-webkit-scrollbar {
+  width: 8px;
+  /* display: none; */
+  height: 4px;
+  width: 2px;
+}
+
+.custom-scrollbar2::-webkit-scrollbar-track {
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.custom-scrollbar2::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 8px;
+  width: 2px;
+  cursor: pointer;
+}

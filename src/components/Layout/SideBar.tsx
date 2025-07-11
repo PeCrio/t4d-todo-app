@@ -40,7 +40,7 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
       const uniqueCategories = new Set(getAllTodos.map((allTodos)=> allTodos.category).filter(Boolean) ?? [])
       setCategories([...uniqueCategories]);
       setIsLoading(false);
-    },1000)
+    },500)
   }
 
   useEffect(()=>{

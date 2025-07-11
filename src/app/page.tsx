@@ -2,7 +2,7 @@
 
 import { FiPlus } from "react-icons/fi";
 import { dummyData } from "@/data/dummy-list";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IListStructure } from "@/types/ListTypes";
 import StatusDiv from "@/components/StatusDiv";
 import TodoFormModal from "@/components/TodoFormModal";
@@ -16,6 +16,7 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [allTodoList, setAllTodoList] = useState<IListStructure[]>([]);
+  const [mode, setMode] = useState<'add' | 'edit' | 'delete'>('add');
 
   const { selectedCategory } = useCategory();
   useEffect(() => {
@@ -25,16 +26,17 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(()=>{
-    refreshTodoList();
-  },[selectedCategory])
   
-  
-  const refreshTodoList = () => {
+  const refreshTodoList = useCallback(() => {
     setPageLoading(true);
     setTimeout(() => {
       try {
-        const locallySavedData = selectedCategory ? LocalStorageService.get<IListStructure[]>()?.filter((list)=> list.category == selectedCategory) : LocalStorageService.get<IListStructure[]>();
+        const stored = LocalStorageService.get<IListStructure[]>() ?? [];
+
+        const locallySavedData = selectedCategory
+          ? stored.filter((list) => list.category === selectedCategory)
+          : stored;
+
         if (locallySavedData) {
           setAllTodoList(locallySavedData);
           setCompleted(locallySavedData.filter((list) => list.completed));
@@ -45,14 +47,24 @@ export default function Home() {
       } finally {
         setPageLoading(false);
       }
-    }, 1200);
-  };
+    }, 500);
+  }, [selectedCategory]);
+  
+  useEffect(()=>{
+    refreshTodoList();
+  },[selectedCategory, refreshTodoList]);
+
+  const addNewTask = () => {
+    setMode("add");
+    setModalOpen(true);
+  }
+  
 
   return (
     <div className="w-full">
       <main className="w-full py-4">
         <div className="flex justify-end">
-          <div className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95" onClick={()=>setModalOpen(true)}>
+          <div className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95" onClick={addNewTask}>
             <span><FiPlus /></span>
             <span>Add New Task</span>
           </div>
@@ -84,7 +96,12 @@ export default function Home() {
         </div>
       </main>
       <Overlay isOpen={modalOpen}>
-        <TodoFormModal setModalOpen={setModalOpen} refreshTodoList={refreshTodoList} />
+        <TodoFormModal
+          setModalOpen={setModalOpen}
+          refreshTodoList={refreshTodoList}
+          mode={mode}
+          setMode={setMode}
+        />
       </Overlay>
     </div>
   );
