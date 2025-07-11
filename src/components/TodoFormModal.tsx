@@ -137,9 +137,9 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
             </div>
 
             {(mode === "add" || mode === "edit") && 
-            <div className='bg-white w-full max-h-[80vh] rounded-md relative overflow-scroll custom-scrollbar2'>
+            <div className='bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll custom-scrollbar2'>
                 <p className='text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white'>{ `${mode === "edit" ? 'Edit' : 'Add'} Todo List`} </p>
-                <form className='p-6' onSubmit={handleSubmit}>
+                <form className='p-6 h-[80vh] overflow-scroll custom-scrollbar2' onSubmit={handleSubmit}>
                     <div className='flex flex-col gap-[20px]'>
                         <div className='w-full flex flex-col'>
                             <span className='pb-1'>Name<span className='text-red-500'>*</span></span>
