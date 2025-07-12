@@ -103,8 +103,8 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
     }
 
     useEffect(()=>{
-        const validSubTasks = form.subTasks.map((task)=> task.trim()).filter(Boolean)
-        setIsFormValid((!form.hasSubTasks || validSubTasks.length > 1) && form.date !== '' && form.name.trim() !== '' ? true : false);
+        const validSubTasks = form.subTasks.map((task)=> task.trim()).filter(Boolean);
+        setIsFormValid(((!form.hasSubTasks || validSubTasks.length > 0) && form.date !== '' && form.name.trim() !== '') ? true : false);
     },[form.name, form.date, form.hasSubTasks, form.subTasks])
 
     const addSubTasks = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
