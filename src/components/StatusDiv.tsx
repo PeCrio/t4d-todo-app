@@ -2,13 +2,13 @@
 
 import { IListStructure } from "@/types/ListTypes";
 import React, { useState } from "react";
-import { SlCalender } from "react-icons/sl";
-import { HiOutlineDotsVertical } from "react-icons/hi";
 import { LocalStorageService } from "@/utils/LocalStorageService";
 import TodoFormModal from "./TodoFormModal";
 import Overlay from "./Overlay";
 import { formatToLongDate } from "@/utils/Formatters";
 import { toast } from "react-toastify";
+import DynamicIcons from "./DynamicIcons";
+import SingleWeatherDetails from "./SingleWeatherDetails";
 
 interface Props {
   data: IListStructure[];
@@ -68,7 +68,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
                 className="absolute right-[5px] top-[8px] cursor-pointer p-1 rounded-full hover:bg-gray-200 transition-all duration-300 ease-in-out"
                 onClick={() => handlePopUpToggle(index)}
               >
-                <HiOutlineDotsVertical />
+                <DynamicIcons iconName="pepicons-pencil:dots-y" />
               </span>
               {isPopupOpen[index] ? (
                 <div
@@ -95,7 +95,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
                 <span>{item.description || "Nil"}</span>
                 <br />
                 <span className="flex gap-[5px] items-center">
-                  <SlCalender />
+                  <DynamicIcons iconName="pixel:calender-solid" width={20} height={20}/>
                   <span className="font-semibold">
                     {formatToLongDate(item.date)}
                   </span>
@@ -111,6 +111,12 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
                     <></>
                   )}
                 </ul>
+                <div>
+                  {
+                    item.weather && 
+                    <SingleWeatherDetails weather={item?.weather}/>
+                  }
+                </div>
                 {
                   item.tag && 
                   <span className="pt-4 text-[14px] text-theme-orange">

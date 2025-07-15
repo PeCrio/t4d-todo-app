@@ -5,8 +5,7 @@ import { useTag } from '@/store/TagContext';
 import { IListStructure } from '@/types/ListTypes';
 import { LocalStorageService } from '@/utils/LocalStorageService';
 import { useEffect, useState } from 'react';
-import { FaTimes } from 'react-icons/fa';
-import { RxReset } from "react-icons/rx";
+import DynamicIcons from '../DynamicIcons';
 
 interface SideBarProps {
   toggleSidebar: () => void;
@@ -62,7 +61,7 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
           onClick={toggleSidebar}
           className="lg:hidden p-2 focus:outline-none cursor-pointer"
         >
-          <FaTimes className="text-xl text-theme-orange" />
+          <DynamicIcons iconName='iconamoon:sign-times-light' />
         </button>
       </div>
       {
@@ -77,7 +76,7 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
           ))}
           <div className='text-center'>
             <button className='bg-white rounded-[3px] mt-5 px-4 flex items-center gap-[3px] m-auto cursor-pointer' onClick={()=>setSelectedTag('')}>
-              <RxReset />
+              <DynamicIcons iconName='radix-icons:reset' />
               Reset
             </button>
           </div>

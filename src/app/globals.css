@@ -59,6 +59,12 @@
   @apply border-b-2;
 }
 
+select {
+  -moz-appearance:none;
+  -webkit-appearance:none;
+  appearance:none;
+}
+
 @media screen and (max-width: 1032px) {
   .todo-task-div{
     display: flex;
