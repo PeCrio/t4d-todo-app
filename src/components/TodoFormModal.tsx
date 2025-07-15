@@ -116,6 +116,10 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
     const removeSubTask = (index: number) =>{
         subTasks.splice(index, 1)
         setSubTaskLength((prev)=>prev - 1);
+
+        if(subTaskLength == 1){
+            setForm((prev) => ({...prev, hasSubTasks: false}))
+        }
     }
     
     const handleDelete = () => {
@@ -170,15 +174,12 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                             {hasSubTasks && <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>{setSubTaskLength((prev)=>prev + 1); setForm((prev)=> ({...prev, subTasks:[...prev.subTasks, '']}))}}><MdAdd /></div>}
                         </div>
                         {
-                            hasSubTasks ?
+                            hasSubTasks && subTaskLength > 0 ?
                             Array.from({ length: subTaskLength }).map((_, index) => (
                             <div key={index}>
                                 <div className='flex items-center gap-[10px]'>
                                     <input type='text' value={subTasks[index]} className='inputDiv w-full rounded-md' placeholder='Enter SubTask' onChange={(e)=>addSubTasks(index, e)} />
-                                    {
-                                        index !== 0 &&
-                                        <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>removeSubTask(index)}><FiMinus /></div>
-                                    }
+                                    <div className='flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer' onClick={()=>removeSubTask(index)}><FiMinus /></div>
                                 </div>
                             </div>
                             ))
