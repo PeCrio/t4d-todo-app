@@ -1,5 +1,5 @@
 export type IListStructure = {
-    category: string;
+    tag: string;
     description: string;
     name: string;
     time: string;
@@ -10,9 +10,9 @@ export type IListStructure = {
     subTasks?: string[];
 }
 
-export type ICategoryContext = {
-    selectedCategory: string | null;
-    setSelectedCategory: (category: string) => void;
+export type ITagContext = {
+    selectedTag: string | null;
+    setSelectedTag: (tag: string) => void;
 }
 
 export type IFilterContextType = {

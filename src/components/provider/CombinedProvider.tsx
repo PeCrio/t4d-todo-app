@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
-import { CategoryProvider } from '@/store/CategoryContext';
 import { FilterProvider } from '@/store/FilterContext';
+import { TagProvider } from '@/store/TagContext';
 
 export const CombinedProviders = ({ children }: { children: ReactNode }) => {
   return (
-    <CategoryProvider>
+    <TagProvider>
       <FilterProvider>
         {children}
       </FilterProvider>
-    </CategoryProvider>
+    </TagProvider>
   );
 };
