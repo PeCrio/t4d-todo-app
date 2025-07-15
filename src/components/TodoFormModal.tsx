@@ -23,14 +23,14 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
         name: '',
         description: '',
         date: '',
-        category: '',
+        tag: '',
         hasSubTasks: false,
         subTasks: [''],
     };
 
     const [form, setForm] = useState(defaultFormState);
 
-    const { name, description, date, category, hasSubTasks, subTasks } = form
+    const { name, description, date, tag, hasSubTasks, subTasks } = form
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -45,7 +45,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
             if (currentTodoItem) {
                 const isoDateFormat = currentTodoItem ? new Date(currentTodoItem?.date).toISOString().split('T')[0] : ''
                 setSubTaskLength(currentTodoItem?.subTasks?.length ?? 1);
-                setForm(prev => ({ ...prev, name: currentTodoItem?.name, completed: currentTodoItem?.completed, hasSubTasks: currentTodoItem?.has_subtask, subTasks: currentTodoItem?.subTasks ?? [''], description: currentTodoItem?.description, date: isoDateFormat, category: currentTodoItem?.category }));
+                setForm(prev => ({ ...prev, name: currentTodoItem?.name, completed: currentTodoItem?.completed, hasSubTasks: currentTodoItem?.has_subtask, subTasks: currentTodoItem?.subTasks ?? [''], description: currentTodoItem?.description, date: isoDateFormat, tag: currentTodoItem?.tag }));
             }
         }
     }, [todoItemId]);
@@ -64,7 +64,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                 name,
                 description,
                 date,
-                category,
+                tag,
                 has_subtask: hasSubTasks,
                 completed: todoItemId ? currentTodoItem?.completed : false,
                 ...(hasSubTasks && { subTasks })
@@ -96,7 +96,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
             setForm(defaultFormState);
             refreshTodoList();
         }catch(e){
-            console.log(e)
+            toast.error((e as Error).message);
         }finally{
             setIsLoading(false);
         }
@@ -127,8 +127,7 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
               refreshTodoList();
               toast.info("To-do item has been successfully deleted!");
             } catch (err) {
-                console.log(err);
-                toast.error("To-do item could not be deleted!");
+                toast.error((err as Error).message || "To-do item could not be deleted!");
             }
         }
     };
@@ -159,8 +158,8 @@ const TodoFormModal = ({ setModalOpen, todoItemId, refreshTodoList, mode }: Todo
                                 <input type='date' value={date} className='inputDiv rounded-md' onChange={e => setForm(prev => ({ ...prev, date: e.target.value }))}/>
                             </div>
                             <div className='flex flex-col w-full'>
-                                <span>Category</span>
-                                <input type='text' value={category} className='inputDiv rounded-md' placeholder='Enter Category' onChange={e => setForm(prev => ({ ...prev, category: e.target.value }))}/>
+                                <span>Tag</span>
+                                <input type='text' value={tag} className='inputDiv rounded-md' placeholder='Enter Tag' onChange={e => setForm(prev => ({ ...prev, tag: e.target.value }))}/>
                             </div>
                         </div>
                         <div className='flex items-center justify-between gap-[5px]'>

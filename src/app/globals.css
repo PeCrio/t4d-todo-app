@@ -116,10 +116,24 @@
     --foreground: #ededed;
   }
 } */
+ 
+
+.list_popup span{
+    cursor: pointer;
+    padding: 3px;
+    width: fit-content;
+}
+.list_popup span:hover{
+    color: var(--color-theme-orange);
+}
 
 body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+body:has(.overlay){
+    overflow: hidden;
 }
 
 /* scrollbar */

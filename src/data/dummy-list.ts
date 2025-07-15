@@ -1,6 +1,6 @@
 export const dummyData = [
     {
-        category: "grocery",
+        tag: "grocery",
         description: "This is a sample",
         name: "Start the todo list app",
         time: "9:00am",
@@ -10,7 +10,7 @@ export const dummyData = [
         id: 1,
     },
     {
-        category: "Reading",
+        tag: "Reading",
         description: "",
         name: "Read Physics chapter 1",
         time: "11:00am",

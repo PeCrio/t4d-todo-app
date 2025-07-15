@@ -8,9 +8,10 @@ import StatusDiv from "@/components/StatusDiv";
 import TodoFormModal from "@/components/TodoFormModal";
 import Overlay from "@/components/Overlay";
 import { LocalStorageService } from "@/utils/LocalStorageService";
-import { useCategory } from "@/store/CategoryContext";
 import { useFilter } from "@/store/FilterContext";
 import { getISODateFormat } from "@/utils/Formatters";
+import { toast } from "react-toastify";
+import { useTag } from "@/store/TagContext";
 
 export default function Home() {
   const [completed, setCompleted] = useState<IListStructure[]>([]);
@@ -21,7 +22,7 @@ export default function Home() {
   const [mode, setMode] = useState<'add' | 'edit' | 'delete'>('add');
   const { setSelectedFilterQuery, selectedFilterQuery } = useFilter();
 
-  const { selectedCategory } = useCategory();
+  const { selectedTag } = useTag();
   useEffect(() => {
     const existing = LocalStorageService.get<IListStructure[]>();
     if (!existing || existing.length === 0) {
@@ -38,8 +39,8 @@ export default function Home() {
 
         let locallySavedData = stored;
 
-        if (selectedCategory) {
-          locallySavedData = locallySavedData.filter((list) => list.category === selectedCategory);
+        if (selectedTag) {
+          locallySavedData = locallySavedData.filter((list) => list.tag === selectedTag);
         }
 
         if (selectedFilterQuery) {
@@ -60,16 +61,16 @@ export default function Home() {
           setTodo(locallySavedData.filter((list) => !list.completed));
         }
       } catch (err) {
-        console.log(err);
+        toast.error((err as Error).message);
       } finally {
         setPageLoading(false);
       }
     }, 500);
-  }, [selectedCategory, selectedFilterQuery]);
+  }, [selectedTag, selectedFilterQuery]);
   
   useEffect(()=>{
     refreshTodoList();
-  },[selectedCategory, refreshTodoList]);
+  },[selectedTag, refreshTodoList]);
 
   const addNewTask = () => {
     setMode("add");

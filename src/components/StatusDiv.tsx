@@ -4,11 +4,11 @@ import { IListStructure } from "@/types/ListTypes";
 import React, { useState } from "react";
 import { SlCalender } from "react-icons/sl";
 import { HiOutlineDotsVertical } from "react-icons/hi";
-import styles from "./styles.module.css";
 import { LocalStorageService } from "@/utils/LocalStorageService";
 import TodoFormModal from "./TodoFormModal";
 import Overlay from "./Overlay";
 import { formatToLongDate } from "@/utils/Formatters";
+import { toast } from "react-toastify";
 
 interface Props {
   data: IListStructure[];
@@ -47,7 +47,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
       refreshTodoList();
       LocalStorageService.set(updatedLists);
     } catch (err) {
-      console.log(err);
+      toast.error((err as Error).message);
     }
   };
 
@@ -72,7 +72,7 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
               </span>
               {isPopupOpen[index] ? (
                 <div
-                  className={`bg-white rounded-md px-4 p-2 absolute z-[1] top-[35px] -right-[5px] shadow-md gap-[5px] flex flex-col ${styles.list_popup}`}
+                  className={`bg-white rounded-md px-4 p-2 absolute z-[1] top-[35px] -right-[5px] shadow-md gap-[5px] flex flex-col list_popup`}
                   onClick={() => handlePopUpToggle(index)}
                 >
                   <div className="cursor-pointer hover:text-[#f1884d] w-fit transition-all duration-300 ease-in-out" onClick={() => updateTodo(item.id)}>Edit</div>
@@ -112,9 +112,9 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
                   )}
                 </ul>
                 {
-                  item.category && 
+                  item.tag && 
                   <span className="pt-4 text-[14px] text-theme-orange">
-                    #{item.category}
+                    #{item.tag}
                   </span>
                 }
               </li>
