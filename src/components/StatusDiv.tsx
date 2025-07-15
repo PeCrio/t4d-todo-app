@@ -8,6 +8,7 @@ import Overlay from "./Overlay";
 import { formatToLongDate } from "@/utils/Formatters";
 import { toast } from "react-toastify";
 import DynamicIcons from "./DynamicIcons";
+import SingleWeatherDetails from "./SingleWeatherDetails";
 
 interface Props {
   data: IListStructure[];
@@ -110,6 +111,12 @@ const StatusDiv = ({ status, data, refreshTodoList }: Props) => {
                     <></>
                   )}
                 </ul>
+                <div>
+                  {
+                    item.weather && 
+                    <SingleWeatherDetails weather={item?.weather}/>
+                  }
+                </div>
                 {
                   item.tag && 
                   <span className="pt-4 text-[14px] text-theme-orange">

@@ -468,8 +468,8 @@ const TodoFormModal = ({
               </span>
               <div className="pt-4 flex gap-[20px] justify-end">
                 {isAnOutDoorEvent && (
-                  <div className="" onClick={getWeatherForeCast}>
-                    <button
+                  <div className="" onClick={()=>getWeatherForeCast()}>
+                    <button type="button"
                       className={`px-4 py-2 rounded-md text-white text-[14px] bg-theme-blue cursor-pointer`}
                     >
                       {isWeatherLoading ? "Loading..." : "See Forecast"}

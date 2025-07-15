@@ -8,6 +8,7 @@ export type IListStructure = {
     completed: boolean;
     id: number | string;
     subTasks?: string[];
+    weather?: IWeatherStructure | IWeatherWithDateStructure;
 }
 
 export type ITagContext = {
