@@ -1,6 +1,6 @@
 "use client";
 
-import { FiPlus } from "react-icons/fi";
+import DynamicIcons from "@/components/DynamicIcons";
 import { dummyData } from "@/data/dummy-list";
 import { useCallback, useEffect, useState } from "react";
 import { IListStructure } from "@/types/ListTypes";
@@ -83,7 +83,7 @@ export default function Home() {
       <main className="w-full py-4">
         <div className="flex justify-end">
           <div className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95" onClick={addNewTask}>
-            <span><FiPlus /></span>
+            <span><DynamicIcons iconName="bitcoin-icons:plus-filled"/></span>
             <span>Add New Task</span>
           </div>
         </div>
