@@ -1,4 +1,4 @@
-import { FaBars } from "react-icons/fa";
+import DynamicIcons from "../DynamicIcons";
 
 interface NavBarProps {
   toggleSidebar: () => void;
@@ -12,7 +12,7 @@ const NavBar = ({ toggleSidebar }: NavBarProps) => {
         onClick={toggleSidebar}
         className="lg:hidden p-2 mr-4 focus:outline-none cursor-pointer"
       >
-        <FaBars className="text-2xl text-theme-orange" />
+        <DynamicIcons iconName="heroicons:bars-3-20-solid" width={32} height={32} className="text-2xl text-theme-orange"/>
       </button>
       <h1 className="text-2xl font-bold flex-grow text-left"><i>VERS</i> Todo App</h1>
     </nav>

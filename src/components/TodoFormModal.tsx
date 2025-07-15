@@ -15,8 +15,7 @@ import React, {
   useId,
   useEffect,
 } from "react";
-import { MdOutlineCancel, MdAdd } from "react-icons/md";
-import { FiMinus } from "react-icons/fi";
+import DynamicIcons from "./DynamicIcons";
 import { toast } from "react-toastify";
 import countriesDetails from "@/data/countries.json";
 import Image from "next/image";
@@ -252,7 +251,7 @@ const TodoFormModal = ({
           className={`-top-[20px] -right-[40px] absolute`}
           onClick={() => setModalOpen(false)}
         >
-          <MdOutlineCancel className="text-[28px] text-theme-blue cursor-pointer bg-white rounded-full" />
+          <DynamicIcons iconName="iconoir:cancel" className="text-[28px] text-theme-blue cursor-pointer bg-white rounded-full" />
         </div>
 
         {(mode === "add" || mode === "edit") && (
@@ -353,7 +352,7 @@ const TodoFormModal = ({
                           }));
                         }}
                       >
-                        <MdAdd />
+                        <DynamicIcons iconName="gridicons:plus" width={15} height={15} />
                       </div>
                     )}
                   </div>
@@ -376,7 +375,7 @@ const TodoFormModal = ({
                               className="flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer"
                               onClick={() => removeSubTask(index)}
                             >
-                              <FiMinus />
+                                <DynamicIcons iconName="cil:minus" width={18} height={18} />
                             </div>
                           </div>
                         </div>
