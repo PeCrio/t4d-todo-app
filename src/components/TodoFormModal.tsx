@@ -55,7 +55,6 @@ const TodoFormModal = ({
     hasSubTasks: false,
     subTasks: [""],
     isAnOutDoorEvent: false,
-    // isAnOutDoorEvent: todoItemId !== '' ? true : false,
     country: "",
     state: "",
   };
@@ -414,7 +413,7 @@ const TodoFormModal = ({
                     </label>
                   </div>
                   <div className="py-4">
-                    {(isAnOutDoorEvent && weather) && (
+                    {(isAnOutDoorEvent || weather) && (
                       <>
                         <div className="relative">
                           <select
