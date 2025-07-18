@@ -8,7 +8,7 @@ const SingleWeatherDetails = ({weather}: { weather: IWeatherStructure | IWeather
         {weather && (
             <div
             key={weather.address}
-            className="bg-white rounded-md shadow-lg p-4"
+            className="bg-white border border-gray-100 my-1 rounded-md shadow-lg p-4"
             >
             {"days" in weather ? (
                 <div>

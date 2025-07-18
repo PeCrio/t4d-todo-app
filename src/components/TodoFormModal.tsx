@@ -14,6 +14,7 @@ import React, {
   SetStateAction,
   useId,
   useEffect,
+  useCallback,
 } from "react";
 import DynamicIcons from "./DynamicIcons";
 import { toast } from "react-toastify";
@@ -22,6 +23,7 @@ import Image from "next/image";
 import axiosInstance from "@/api/axios";
 import { getISODateFormat } from "@/utils/Formatters";
 import SingleWeatherDetails from "./SingleWeatherDetails";
+import DeletePrompt from "./DeletePrompt";
 
 interface TodoFormModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -77,13 +79,19 @@ const TodoFormModal = ({
   const id = crypto.randomUUID();
   const domId = useId();
 
+  const getStates = useCallback(() => {
+    const filteredState = countries.find(
+      (filteredCountry) => filteredCountry.name === country
+    )?.states;
+    setStates(filteredState as IStateStructure[]);
+    setForm((prev) => ({ ...prev, state: filteredState?.[0]?.name || '' }));
+  }, [countries, country])
+
   useEffect(() => {
     setCountries(countriesDetails as ICountryStructure[]);
     if (countries) {
       setForm((prev) => ({ ...prev, country: countries[0]?.name }));
-      setForm((prev) => ({ ...prev, state: states?.[0]?.name }));
     }
-    getStates();
   }, [countries]);
 
   useEffect(() => {
@@ -91,13 +99,6 @@ const TodoFormModal = ({
       getStates();
     }
   }, [country]);
-
-  const getStates = () => {
-    const filteredState = countries.find(
-      (filteredCountry) => filteredCountry.name === country
-    )?.states;
-    setStates(filteredState as IStateStructure[]);
-  };
 
   useEffect(() => {
     const preExistingData = LocalStorageService.get<IListStructure[]>();
@@ -111,6 +112,7 @@ const TodoFormModal = ({
           ? new Date(currentTodoItem?.date).toISOString().split("T")[0]
           : "";
         setSubTaskLength(currentTodoItem?.subTasks?.length ?? 1);
+        setWeather(currentTodoItem.weather);
         setForm((prev) => ({
           ...prev,
           name: currentTodoItem?.name,
@@ -120,10 +122,14 @@ const TodoFormModal = ({
           description: currentTodoItem?.description,
           date: isoDateFormat,
           tag: currentTodoItem?.tag,
+          isAnOutDoorEvent: !!currentTodoItem?.weather,
+          country: countries.find((country)=> country.name === currentTodoItem.weather?.address.split(',')[1])?.name || '',
+          state: states.find((state)=> state.name === currentTodoItem.weather?.address.split(',')[0])?.name || ''
         }));
       }
     }
   }, [todoItemId]);
+  
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -144,7 +150,7 @@ const TodoFormModal = ({
         has_subtask: hasSubTasks,
         completed: todoItemId ? currentTodoItem?.completed : false,
         ...(hasSubTasks && { subTasks }),
-        ...(isAnOutDoorEvent && { weather }),
+        ...(form.isAnOutDoorEvent && weather ? { weather } : {})
       };
 
       if (todoItemId) {
@@ -389,6 +395,7 @@ const TodoFormModal = ({
                       type="checkbox"
                       className="rounded-md"
                       checked={isAnOutDoorEvent}
+                      name="isAnOutDoorEvent"
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
@@ -396,7 +403,6 @@ const TodoFormModal = ({
                         }))
                       }
                       id={`outdoor-${domId}`}
-                      name="subtask"
                     />
                     <label
                       className="text-[15px] cursor-pointer"
@@ -406,7 +412,7 @@ const TodoFormModal = ({
                     </label>
                   </div>
                   <div className="py-4">
-                    {isAnOutDoorEvent && (
+                    {(isAnOutDoorEvent || weather) && (
                       <>
                         <div className="relative">
                           <select
@@ -417,6 +423,7 @@ const TodoFormModal = ({
                                 country: e.target.value,
                               }))
                             }
+                            value={form.country}
                           >
                             {countries.map((country) => (
                               <option key={country.id}>{country.name}</option>
@@ -439,6 +446,7 @@ const TodoFormModal = ({
                                 state: e.target.value,
                               }))
                             }
+                            value={form.state}
                           >
                             {states?.length > 0 ? (
                               states.map((state) => (
@@ -492,25 +500,7 @@ const TodoFormModal = ({
           </div>
         )}
 
-        {mode === "delete" && (
-          <div className="bg-white w-96 max-h-[80vh] rounded-md relative overflow-scroll custom-scrollbar2">
-            <p className="text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white">
-              {`Delete Todo Item`}{" "}
-            </p>
-            <div className="p-6">
-              <p>Are you sure you want to delete To-do Item</p>
-              <em>This action cannot be undone!</em>
-              <div className="flex justify-end w-full pt-4">
-                <button
-                  onClick={handleDelete}
-                  className={`px-4 py-2 rounded-md text-white text-[14px] bg-red-600 hover:bg-red-500 cursor-pointer`}
-                >
-                  {isLoading ? "Deleting..." : "Delete"}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {mode === "delete" && <DeletePrompt isLoading={isLoading} handleDelete={handleDelete} />}
       </div>
     </div>
   );
