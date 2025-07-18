@@ -93,13 +93,13 @@ const TodoFormModal = ({
       setForm((prev) => ({ ...prev, state: states?.[0]?.name }));
     }
     getStates();
-  }, [countries, states, getStates]);
+  }, [countries]);
 
   useEffect(() => {
     if (country) {
       getStates();
     }
-  }, [country, getStates]);
+  }, [country]);
 
   useEffect(() => {
     const preExistingData = LocalStorageService.get<IListStructure[]>();
@@ -125,8 +125,6 @@ const TodoFormModal = ({
           tag: currentTodoItem?.tag,
 
           isAnOutDoorEvent: !!currentTodoItem?.weather,
-        //   country: currentTodoItem?.country ?? countries[0]?.name ?? "",
-        //   state: currentTodoItem?.state ?? "",
         }));
       }
     }
@@ -246,6 +244,8 @@ const TodoFormModal = ({
         setIsWeatherLoading(false);
     }
   };
+
+  console.log(country);
 
   return (
     <div className="h-full flex items-center justify-center z-50">
