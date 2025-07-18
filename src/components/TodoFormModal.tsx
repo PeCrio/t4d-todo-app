@@ -84,15 +84,14 @@ const TodoFormModal = ({
       (filteredCountry) => filteredCountry.name === country
     )?.states;
     setStates(filteredState as IStateStructure[]);
+    setForm((prev) => ({ ...prev, state: filteredState?.[0]?.name || '' }));
   }, [countries, country])
 
   useEffect(() => {
     setCountries(countriesDetails as ICountryStructure[]);
     if (countries) {
       setForm((prev) => ({ ...prev, country: countries[0]?.name }));
-      setForm((prev) => ({ ...prev, state: states?.[0]?.name }));
     }
-    getStates();
   }, [countries]);
 
   useEffect(() => {
@@ -123,8 +122,9 @@ const TodoFormModal = ({
           description: currentTodoItem?.description,
           date: isoDateFormat,
           tag: currentTodoItem?.tag,
-
           isAnOutDoorEvent: !!currentTodoItem?.weather,
+          country: countries.find((country)=> country.name === currentTodoItem.weather?.address.split(',')[1])?.name || '',
+          state: states.find((state)=> state.name === currentTodoItem.weather?.address.split(',')[0])?.name || ''
         }));
       }
     }
@@ -244,8 +244,6 @@ const TodoFormModal = ({
         setIsWeatherLoading(false);
     }
   };
-
-  console.log(country);
 
   return (
     <div className="h-full flex items-center justify-center z-50">
@@ -424,6 +422,7 @@ const TodoFormModal = ({
                                 country: e.target.value,
                               }))
                             }
+                            value={form.country}
                           >
                             {countries.map((country) => (
                               <option key={country.id}>{country.name}</option>
@@ -446,6 +445,7 @@ const TodoFormModal = ({
                                 state: e.target.value,
                               }))
                             }
+                            value={form.state}
                           >
                             {states?.length > 0 ? (
                               states.map((state) => (
