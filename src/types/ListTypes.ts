@@ -69,7 +69,7 @@ export interface IWeatherStructure {
 export interface IWeatherWithDateStructure {
   address: string;
   days: {
-    dateTime: string;
+    datetime: string;
     conditions: string;
     temp: string;
     windspeed: string;
