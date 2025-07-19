@@ -95,22 +95,22 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
         return Array.from(new Set(allConditions));
     };
 
-    const handleFiltering = (e) => {
-    const selected = e.target.value;
+    const handleFiltering = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selected = e.target.value;
 
-    if (!clonedWeather?.days) return;
+        if (!clonedWeather?.days) return;
 
-        const filteredDays =
-            selected === "all"
-            ? clonedWeather.days
-            : clonedWeather.days.filter((day) => day.conditions === selected);
+            const filteredDays =
+                selected === "all"
+                ? clonedWeather.days
+                : clonedWeather.days.filter((day) => day.conditions === selected);
 
-        setForm((prev) => ({
-            ...prev,
-            weather: {
-            ...prev.weather,
-            days: filteredDays,
-            },
+            setForm((prev) => ({
+                ...prev,
+                weather: {
+                ...prev.weather,
+                days: filteredDays,
+                },
         }));
     };
 

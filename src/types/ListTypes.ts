@@ -2,7 +2,7 @@ export type IListStructure = {
     tag: string;
     description: string;
     name: string;
-    time: string;
+    time?: string;
     date: string;
     has_subtask: boolean;
     completed: boolean;
