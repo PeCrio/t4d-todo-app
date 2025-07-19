@@ -12,11 +12,13 @@ import { useFilter } from "@/store/FilterContext";
 import { getISODateFormat } from "@/utils/Formatters";
 import { toast } from "react-toastify";
 import { useTag } from "@/store/TagContext";
+import WeatherPredictionsByDate from "@/components/WeatherPredictionsByDate";
 
 export default function Home() {
   const [completed, setCompleted] = useState<IListStructure[]>([]);
   const [todo, setTodo] = useState<IListStructure[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [weatherModalOpen, setWeatherModalOpen] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [allTodoList, setAllTodoList] = useState<IListStructure[]>([]);
   const [mode, setMode] = useState<'add' | 'edit' | 'delete'>('add');
@@ -81,7 +83,11 @@ export default function Home() {
   return (
     <div className="w-full">
       <main className="w-full py-4">
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-[20px]">
+          <div className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95" onClick={()=> setWeatherModalOpen(true)}>
+            <span><DynamicIcons iconName="fluent:weather-hail-night-48-regular"/></span>
+            <span>Get Weather Predictions</span>
+          </div>
           <div className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95" onClick={addNewTask}>
             <span><DynamicIcons iconName="bitcoin-icons:plus-filled"/></span>
             <span>Add New Task</span>
@@ -120,6 +126,11 @@ export default function Home() {
           refreshTodoList={refreshTodoList}
           mode={mode}
           setMode={setMode}
+        />
+      </Overlay>
+      <Overlay isOpen={weatherModalOpen}>
+        <WeatherPredictionsByDate
+          setModalOpen={setWeatherModalOpen}
         />
       </Overlay>
     </div>
