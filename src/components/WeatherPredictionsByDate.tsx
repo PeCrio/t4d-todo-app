@@ -28,7 +28,8 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
   const [states, setStates] = useState<IStateStructure[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [allConditions, setAllConditions] = useState<string[]>();
-  const [clonedWeather, setCloneWeather] = useState<IWeatherWithDateStructure>();
+  const [clonedWeather, setCloneWeather] =
+    useState<IWeatherWithDateStructure>();
 
   const defaultFormState = {
     startDate: "",
@@ -62,7 +63,8 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
   const handleRequest = async () => {
     try {
       setIsLoading(true);
-      const location = state && country ? `${state},${country}` : country || state || "";
+      const location =
+        state && country ? `${state},${country}` : country || state || "";
       let url = `${location}`;
 
       if (startDate && endDate) {
@@ -132,7 +134,7 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
             <div className="relative">
               <p>Country</p>
               <select
-                data-testid="country-select"
+                data-testid="country"
                 className="border border-theme-blue rounded-md p-2 outline-none w-full"
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, country: e.target.value }))
@@ -155,7 +157,7 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
             <div className="relative py-4">
               <p>State</p>
               <select
-                data-testid="state-select"
+                data-testid="state"
                 className="border border-theme-blue rounded-md p-2 outline-none w-full"
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, state: e.target.value }))
@@ -180,19 +182,26 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
             <div className="py-4">
               <div className="flex w-full gap-[20px] flex-wrap sm:flex-nowrap">
                 <div className="flex flex-col gap-[5px] w-full">
-                  <span>Start Date<span className="text-red-500">*</span></span>
+                  <span>
+                    Start Date<span className="text-red-500">*</span>
+                  </span>
                   <input
                     data-testid="start-date"
                     type="date"
                     value={startDate}
                     className="inputDiv rounded-md"
                     onChange={(e) =>
-                      setForm((prev) => ({ ...prev, startDate: e.target.value }))
+                      setForm((prev) => ({
+                        ...prev,
+                        startDate: e.target.value,
+                      }))
                     }
                   />
                 </div>
                 <div className="flex flex-col gap-[5px] w-full">
-                  <span>End Date<span className="text-red-500">*</span></span>
+                  <span>
+                    End Date<span className="text-red-500">*</span>
+                  </span>
                   <input
                     data-testid="end-date"
                     type="date"
@@ -230,9 +239,9 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
                 </div>
               )}
               <div className="flex justify-end">
-                <div
+                <button
+                  type="button"
                   data-testid="search-button"
-                  role="button"
                   className="bg-theme-blue flex items-center gap-[5px] text-[14px] py-2 w-fit px-4 text-white rounded-sm self-end cursor-pointer"
                   onClick={handleRequest}
                 >
@@ -240,11 +249,13 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
                     <span>Loading...</span>
                   ) : (
                     <>
-                      <span><DynamicIcons iconName="proicons:search" /></span>
+                      <span>
+                        <DynamicIcons iconName="proicons:search" />
+                      </span>
                       <span>Search</span>
                     </>
                   )}
-                </div>
+                </button>
               </div>
             </div>
 
@@ -258,7 +269,8 @@ const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
                     className="bg-white border border-gray-100 my-1 rounded-md shadow-lg p-4"
                   >
                     <p className="font-semibold text-theme-blue mb-2">
-                      Date: {day.datetime
+                      Date:{" "}
+                      {day.datetime
                         ? new Date(day.datetime).toLocaleDateString("en-GB")
                         : ""}
                     </p>
