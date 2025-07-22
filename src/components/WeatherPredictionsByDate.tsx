@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -29,7 +28,9 @@ interface WeatherModalProps {
  * WeatherPredictionsByDate component allows users to search for weather forecasts
  * by country, state, and date range. It uses reusable UI components for inputs.
  */
-export const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) => {
+export const WeatherPredictionsByDate = ({
+  setModalOpen,
+}: WeatherModalProps) => {
   const [countries, setCountries] = useState<ICountryStructure[]>([]);
   const [states, setStates] = useState<IStateStructure[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -75,18 +76,17 @@ export const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) =>
   }, [country, getStates]);
 
   const handleRequest = async () => {
+    if (!startDate || !endDate) {
+      toast.error("Please select both start and end dates.");
+      return;
+    }
     try {
       setIsLoading(true);
-      const location = state && country ? `${state},${country}` : country || state || "";
+      const location =
+        state && country ? `${state},${country}` : country || state || "";
       let url = `${location}`;
 
-      if (startDate && endDate) {
-        url += `/${getISODateFormat(startDate)}/${getISODateFormat(endDate)}`;
-      } else if (startDate) {
-        url += `/${getISODateFormat(startDate)}`;
-      } else if (endDate) {
-        url += `/null/${getISODateFormat(endDate)}`;
-      }
+      url += `/${getISODateFormat(startDate)}/${getISODateFormat(endDate)}`;
 
       const res = await axiosInstance.get(
         `${url}?unitGroup=metric&key=${process.env.NEXT_PUBLIC_API_KEY}`
@@ -99,7 +99,9 @@ export const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) =>
         setAllConditions(uniqueConditions(res.data.days));
       }
     } catch (err) {
-      toast.error((err as Error).message || "Failed to fetch weather forecast.");
+      toast.error(
+        (err as Error).message || "Failed to fetch weather forecast."
+      );
     } finally {
       setIsLoading(false);
     }
@@ -128,17 +130,16 @@ export const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) =>
   return (
     <div className="h-full flex items-center justify-center z-50">
       <div className="max-w-[600px] w-full relative mx-auto">
-        <div
-          className="top-[15px] z-[10] sm:-top-[20px] right-[20px] sm:-right-[40px] absolute"
-          onClick={() => setModalOpen(false)}
-        >
-          <DynamicIcons
-            iconName="iconoir:cancel"
-            className="text-[28px] text-theme-blue cursor-pointer bg-white rounded-full"
-          />
-        </div>
-
         <div className="bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll">
+          <div
+            className="flex justify-end pt-2"
+            onClick={() => setModalOpen(false)}
+          >
+            <DynamicIcons
+              iconName="iconoir:cancel"
+              className="text-[28px] text-theme-blue cursor-pointer bg-white rounded-full"
+            />
+          </div>
           <p className="text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white z-[2]">
             Find the right weather for your outing
           </p>
@@ -152,7 +153,10 @@ export const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) =>
                   setForm((prev) => ({ ...prev, country: e.target.value }))
                 }
                 value={country}
-                options={countries.map((c) => ({ value: c.name, label: c.name }))}
+                options={countries.map((c) => ({
+                  value: c.name,
+                  label: c.name,
+                }))}
               />
             </div>
 
@@ -201,23 +205,23 @@ export const WeatherPredictionsByDate = ({ setModalOpen }: WeatherModalProps) =>
               </div>
             </div>
 
-            <div className="flex items-center pt-3 justify-between gap-[20px] flex-wrap sm:flex-nowrap">
-              {form.weather.days?.length > 0 && (
-                <div className="flex gap-[5px] items-center relative w-fit">
-                  <p>Filter By:</p>
-                  <Select
-                    data-testid="filter-condition"
-                    className="py-1 px-2 w-[200px]"
-                    onChange={handleFiltering}
-                    options={[
-                      { value: "all", label: "Show All" },
-                      ...(allConditions?.map((condition) => ({
-                        value: condition,
-                        label: condition,
-                      })) || []),
-                    ]}
-                  />
-                </div>
+            <div className="flex items-center pt-3 justify-between">
+              {form.weather.days?.length > 0 && (                
+                  <div className="relative py-4">
+                    <Select
+                      label="Filter by"
+                      data-testid="filter-condition"
+                      onChange={handleFiltering}
+                      options={[
+                        { value: "all", label: "Show All" },
+                        ...(allConditions?.map((condition) => ({
+                          value: condition,
+                          label: condition,
+                        })) || []),
+                      ]}
+                    />
+                  </div>
+                
               )}
               <div className="flex justify-end">
                 <Button

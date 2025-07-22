@@ -61,8 +61,8 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
         <Button
           onClick={toggleSidebar}
           className="lg:hidden p-2 focus:outline-none cursor-pointer"
+          iconName='iconamoon:sign-times-light'
         >
-          <DynamicIcons iconName='iconamoon:sign-times-light' />
         </Button>
       </div>
       {
@@ -76,10 +76,12 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
             <TagItem key={tag} label={tag} activeTag={selectedTag} onClick={()=>setSelectedTag(tag)}/>
           ))}
           <div className='text-center'>
-            <button className='bg-white rounded-[3px] mt-5 px-4 flex items-center gap-[3px] m-auto cursor-pointer' onClick={()=>setSelectedTag('')}>
-              <DynamicIcons iconName='radix-icons:reset' />
+            <Button
+            variant='secondary'
+             className='rounded-[3px] mt-5 px-4 py-2 m-auto' onClick={()=>setSelectedTag('')}
+             iconName='radix-icons:reset'>
               Reset
-            </button>
+            </Button>
           </div>
         </ul>
       }

@@ -23,7 +23,7 @@ export const Select = ({
   ...rest
 }: SelectProps) => {
   return (
-    <div className="relative">
+    <div className="w-full relative">
       {label && <p className="mb-1">{label}</p>}
       <select
         data-testid={dataTestId}
@@ -46,7 +46,7 @@ export const Select = ({
         alt="Arrow down"
         height={20}
         width={20}
-        className="pointer-events-none absolute right-3 top-[45px] transform -translate-y-1/2 w-4 h-4"
+        className="pointer-events-none absolute right-3 top-[50px] transform -translate-y-1/2 w-4 h-4"
       />
     </div>
   );

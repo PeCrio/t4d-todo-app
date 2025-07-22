@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -86,7 +85,10 @@ export const TodoFormModal = ({
   useEffect(() => {
     setCountries(countriesDetails as ICountryStructure[]);
     if (countriesDetails.length > 0 && form.country === "") {
-      setForm((prev) => ({ ...prev, country: countriesDetails[0]?.name || "" }));
+      setForm((prev) => ({
+        ...prev,
+        country: countriesDetails[0]?.name || "",
+      }));
     }
   }, []);
 
@@ -118,13 +120,18 @@ export const TodoFormModal = ({
         setSubTaskLength(currentTodoItem.subTasks?.length ?? 1);
         setWeather(currentTodoItem.weather);
 
-        const weatherAddressParts = currentTodoItem.weather?.address?.split(',');
-        const weatherStateName = weatherAddressParts?.[0]?.trim() || '';
-        const weatherCountryName = weatherAddressParts?.[1]?.trim() || '';
+        const weatherAddressParts =
+          currentTodoItem.weather?.address?.split(",");
+        const weatherStateName = weatherAddressParts?.[0]?.trim() || "";
+        const weatherCountryName = weatherAddressParts?.[1]?.trim() || "";
 
-        const initialCountry = countries.find(c => c.name === weatherCountryName)?.name || '';
-        const initialStatesForCountry = countries.find(c => c.name === initialCountry)?.states || [];
-        const initialState = initialStatesForCountry.find(s => s.name === weatherStateName)?.name || '';
+        const initialCountry =
+          countries.find((c) => c.name === weatherCountryName)?.name || "";
+        const initialStatesForCountry =
+          countries.find((c) => c.name === initialCountry)?.states || [];
+        const initialState =
+          initialStatesForCountry.find((s) => s.name === weatherStateName)
+            ?.name || "";
 
         setForm((prev) => ({
           ...prev,
@@ -201,8 +208,8 @@ export const TodoFormModal = ({
       .filter(Boolean);
     setIsFormValid(
       (!form.hasSubTasks || validSubTasks.length > 0) &&
-      form.date.trim() !== "" &&
-      form.name.trim() !== ""
+        form.date.trim() !== "" &&
+        form.name.trim() !== ""
     );
   }, [form.name, form.date, form.hasSubTasks, form.subTasks]);
 
@@ -248,23 +255,25 @@ export const TodoFormModal = ({
       setIsWeatherLoading(true);
       const location =
         state && country ? `${state},${country}` : country || state || "";
-      const eventDate = form.date ? getISODateFormat(form.date) : '';
+      const eventDate = form.date ? getISODateFormat(form.date) : "";
 
       if (!location || !eventDate) {
-        toast.error("Please select a country, state (if applicable), and a due date to get a forecast.");
+        toast.error(
+          "Please select a country, state (if applicable), and a due date to get a forecast."
+        );
         setIsWeatherLoading(false);
         return;
       }
 
       const res = await axiosInstance.get(
-        `${location}/${eventDate}?unitGroup=metric&key=${
-          process.env.NEXT_PUBLIC_API_KEY
-        }`
+        `${location}/${eventDate}?unitGroup=metric&key=${process.env.NEXT_PUBLIC_API_KEY}`
       );
       setWeather(res.data);
       toast.success("Weather forecast fetched!");
     } catch (err) {
-      toast.error((err as Error).message || "Failed to fetch weather forecast.");
+      toast.error(
+        (err as Error).message || "Failed to fetch weather forecast."
+      );
     } finally {
       setIsWeatherLoading(false);
     }
@@ -277,18 +286,22 @@ export const TodoFormModal = ({
           mode !== "delete" ? "w-full" : ""
         } relative mx-auto`}
       >
-        <div
-          className={`top-[15px] z-[10] sm:-top-[20px] right-[20px] sm:-right-[40px] absolute`}
-          onClick={() => setModalOpen(false)}
-        >
-          <DynamicIcons iconName="iconoir:cancel" className="text-[28px] text-theme-blue cursor-pointer bg-white rounded-full" />
-        </div>
-
         {(mode === "add" || mode === "edit") && (
           <div className="bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll">
+            {/* Cancel icon inside modal */}
+            <div
+              className="flex items-end justify-end pt-2"
+              onClick={() => setModalOpen(false)}
+            >
+              <DynamicIcons
+                iconName="iconoir:cancel"
+                className="text-[28px] text-theme-blue cursor-pointer bg-red rounded-full"
+              />
+            </div>
             <p className="text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white">
               {`${mode === "edit" ? "Edit" : "Add"} Todo List`}
             </p>
+
             <form className="p-6 custom-scrollbar2" onSubmit={handleSubmit}>
               <TodoForm
                 form={form}
@@ -302,7 +315,9 @@ export const TodoFormModal = ({
 
               <OutdoorEventWeather
                 isAnOutDoorEvent={isAnOutDoorEvent}
-                setIsAnOutDoorEvent={(checked) => setForm((prev) => ({ ...prev, isAnOutDoorEvent: checked }))}
+                setIsAnOutDoorEvent={(checked) =>
+                  setForm((prev) => ({ ...prev, isAnOutDoorEvent: checked }))
+                }
                 domId={domId}
                 countries={countries}
                 states={states}
@@ -318,14 +333,13 @@ export const TodoFormModal = ({
                 (N:B: You have to fill all required{" "}
                 <span className="text-red-500">*</span> field to submit)
               </span>
-              <div className="pt-4 flex gap-[20px] justify-end">
+              <div className="flex items-center justify-end mt-4">
                 <Button
                   type="submit"
-                  className={`${
-                    isFormValid
-                      ? "bg-theme-blue cursor-pointer"
-                      : "bg-[#cac9c9] cursor-not-allowed"
-                  }`}
+                  className={`
+                    ${!isFormValid ? "bg-[#cac9c9]" : "bg-theme-blue"}
+                    ${isFormValid && !isLoading ? "cursor-pointer" : "cursor-not-allowed"}
+                  `}
                   isLoading={isLoading}
                   disabled={!isFormValid || isLoading}
                 >
@@ -336,7 +350,9 @@ export const TodoFormModal = ({
           </div>
         )}
 
-        {mode === "delete" && <DeletePrompt isLoading={isLoading} handleDelete={handleDelete}  />}
+        {mode === "delete" && (
+          <DeletePrompt isLoading={isLoading} handleDelete={handleDelete} />
+        )}
       </div>
     </div>
   );
