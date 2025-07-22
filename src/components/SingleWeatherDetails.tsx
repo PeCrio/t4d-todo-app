@@ -1,6 +1,6 @@
-import React from 'react'
-import DynamicIcons from './DynamicIcons';
+
 import { IWeatherStructure, IWeatherWithDateStructure } from '@/types/ListTypes';
+import { DynamicIcons } from './ui';
 
 const SingleWeatherDetails = ({weather}: { weather: IWeatherStructure | IWeatherWithDateStructure | undefined}) => {
   return (

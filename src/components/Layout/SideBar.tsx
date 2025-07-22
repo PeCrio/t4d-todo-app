@@ -5,7 +5,8 @@ import { useTag } from '@/store/TagContext';
 import { IListStructure } from '@/types/ListTypes';
 import { LocalStorageService } from '@/utils/LocalStorageService';
 import { useEffect, useState } from 'react';
-import DynamicIcons from '../DynamicIcons';
+import { DynamicIcons } from '../ui/DynamicIcons';
+import { Button } from '../ui/Button';
 
 interface SideBarProps {
   toggleSidebar: () => void;
@@ -57,12 +58,12 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
     <aside className="p-4 h-full flex flex-col">
       <div className="flex justify-between items-center mb-4 text-theme-orange">
         <h2 className="text-xl font-bold">Tags</h2>
-        <button
+        <Button
           onClick={toggleSidebar}
           className="lg:hidden p-2 focus:outline-none cursor-pointer"
         >
           <DynamicIcons iconName='iconamoon:sign-times-light' />
-        </button>
+        </Button>
       </div>
       {
         isLoading ?
