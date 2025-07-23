@@ -3,12 +3,10 @@
 import {
   Dispatch,
   SetStateAction,
-  useCallback,
   useEffect,
   useState,
 } from "react";
 
-import countriesDetailsRaw from "@/data/countries.json";
 import {
   ICountryStructure,
   IStateStructure,
@@ -19,9 +17,11 @@ import { getISODateFormat } from "@/utils/Formatters";
 import axiosInstance from "@/app/api/axios";
 
 import { Input, Select, DynamicIcons, Button } from "./ui";
+import { getAllCountries, getStatesByCountry } from "@/requests/country-requests";
 
 interface WeatherModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
+  modalOpen: boolean;
 }
 
 /**
@@ -29,7 +29,7 @@ interface WeatherModalProps {
  * by country, state, and date range. It uses reusable UI components for inputs.
  */
 export const WeatherPredictionsByDate = ({
-  setModalOpen,
+  setModalOpen, modalOpen
 }: WeatherModalProps) => {
   const [countries, setCountries] = useState<ICountryStructure[]>([]);
   const [states, setStates] = useState<IStateStructure[]>([]);
@@ -50,30 +50,39 @@ export const WeatherPredictionsByDate = ({
 
   const { endDate, startDate, country, state } = form;
 
-  const getStates = useCallback(() => {
-    const filteredState = countries.find((c) => c.name === country)?.states;
-    setStates(filteredState || []);
-    setForm((prev) => ({ ...prev, state: filteredState?.[0]?.name || "" }));
-  }, [countries, country]);
-
-  // Ensure countriesDetails is typed as ICountryStructure[]
-  const countriesDetails = countriesDetailsRaw as ICountryStructure[];
-
-  useEffect(() => {
-    setCountries(countriesDetails);
-    if (countriesDetails.length > 0) {
+  // Get all countries from the API
+  const fetchCountries = async () =>{
+    const countriesData = await getAllCountries();
+    setCountries(countriesData);
+    if (countriesData.length > 0) {
       setForm((prev) => ({
         ...prev,
-        country: countriesDetails[0]?.name || "",
+        country: countriesData[0]?.name || "",
       }));
     }
-  }, []);
+  }
+
+  useEffect(() => {
+    if(modalOpen){
+      fetchCountries();
+    }
+  }, [modalOpen]);
+
+  // Get all states by country id from the API
+  const fetchStates = async () => {
+    const selectedCountryId = countries.find((c) => c.name === country)?.id;
+    const allStates = await getStatesByCountry(selectedCountryId as number);
+    setStates(allStates);
+    if(allStates){
+      setForm((prev) => ({ ...prev, state: allStates?.[0]?.name || "" }));
+    }
+  }
 
   useEffect(() => {
     if (country) {
-      getStates();
+      fetchStates();
     }
-  }, [country, getStates]);
+  }, [country]);
 
   const handleRequest = async () => {
     if (!startDate || !endDate) {
