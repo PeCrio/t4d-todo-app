@@ -5,7 +5,7 @@ import { useTag } from '@/store/TagContext';
 import { IListStructure } from '@/types/ListTypes';
 import { LocalStorageService } from '@/utils/LocalStorageService';
 import { useEffect, useState } from 'react';
-import { DynamicIcons } from '../ui/DynamicIcons';
+// import { DynamicIcons } from '../ui/DynamicIcons';
 import { Button } from '../ui/Button';
 
 interface SideBarProps {
