@@ -5,7 +5,8 @@ import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
-import WeatherPredictionsByDate from "@/components/WeatherPredictionsByDate";
+import { WeatherPredictionsByDate } from "@/components/WeatherPredictionsByDate";
+
 
 // Mocks
 jest.mock("axios");

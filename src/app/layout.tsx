@@ -1,8 +1,8 @@
 
 import type { Metadata } from "next";
 import "./globals.css";
-import LayoutWrapper from "@/components/Layout/LayoutWrapper";
-import ToasterProvider from "@/components/ToasterProvider";
+import LayoutWrapper from "@/components/layout/LayoutWrapper";
+import ToasterProvider from "@/components/provider/ToasterProvider";
 import { CombinedProviders } from "@/components/provider/CombinedProvider";
 
 

@@ -1,4 +1,5 @@
-import React from 'react'
+import { Button } from "./ui"
+
 
 const DeletePrompt = ({isLoading, handleDelete}: {isLoading: boolean, handleDelete: () => void}) => {
   return (
@@ -10,12 +11,13 @@ const DeletePrompt = ({isLoading, handleDelete}: {isLoading: boolean, handleDele
             <p>Are you sure you want to delete To-do Item</p>
             <em>This action cannot be undone!</em>
             <div className="flex justify-end w-full pt-4">
-            <button
+            <Button
                 onClick={handleDelete}
-                className={`px-4 py-2 rounded-md text-white text-[14px] bg-red-600 hover:bg-red-500 cursor-pointer`}
+                variant="danger"
+                className={`px-4 py-2 rounded-md text-white text-[14px] hover:bg-red-500 cursor-pointer`}
             >
                 {isLoading ? "Deleting..." : "Delete"}
-            </button>
+            </Button>
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@ type Props = {
 } & Omit<IconProps, 'icon' | 'width' | 'height' | 'color'>;
 
 
-const DynamicIcons = ({
+export const DynamicIcons = ({
   iconName,
   width = 24,
   height = 24,
@@ -18,4 +18,3 @@ const DynamicIcons = ({
   return <Icon icon={iconName} width={width} height={height} color={color} {...rest} />;
 };
 
-export default DynamicIcons;

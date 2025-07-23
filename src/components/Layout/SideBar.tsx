@@ -5,7 +5,8 @@ import { useTag } from '@/store/TagContext';
 import { IListStructure } from '@/types/ListTypes';
 import { LocalStorageService } from '@/utils/LocalStorageService';
 import { useEffect, useState } from 'react';
-import DynamicIcons from '../DynamicIcons';
+import { DynamicIcons } from '../ui/DynamicIcons';
+import { Button } from '../ui/Button';
 
 interface SideBarProps {
   toggleSidebar: () => void;
@@ -57,12 +58,12 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
     <aside className="p-4 h-full flex flex-col">
       <div className="flex justify-between items-center mb-4 text-theme-orange">
         <h2 className="text-xl font-bold">Tags</h2>
-        <button
+        <Button
           onClick={toggleSidebar}
           className="lg:hidden p-2 focus:outline-none cursor-pointer"
+          iconName='iconamoon:sign-times-light'
         >
-          <DynamicIcons iconName='iconamoon:sign-times-light' />
-        </button>
+        </Button>
       </div>
       {
         isLoading ?
@@ -75,10 +76,12 @@ const SideBar = ({ toggleSidebar }: SideBarProps) => {
             <TagItem key={tag} label={tag} activeTag={selectedTag} onClick={()=>setSelectedTag(tag)}/>
           ))}
           <div className='text-center'>
-            <button className='bg-white rounded-[3px] mt-5 px-4 flex items-center gap-[3px] m-auto cursor-pointer' onClick={()=>setSelectedTag('')}>
-              <DynamicIcons iconName='radix-icons:reset' />
+            <Button
+            variant='secondary'
+             className='rounded-[3px] mt-5 px-4 py-2 m-auto' onClick={()=>setSelectedTag('')}
+             iconName='radix-icons:reset'>
               Reset
-            </button>
+            </Button>
           </div>
         </ul>
       }
