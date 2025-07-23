@@ -31,7 +31,7 @@ interface TodoFormModalProps {
   todoItemId?: string | number;
   refreshTodoList: () => void;
   mode: "add" | "edit" | "delete";
-  modalOpen: boolean;
+  modalOpen?: boolean;
 }
 
 const TodoFormModal = ({

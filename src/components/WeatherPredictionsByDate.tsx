@@ -21,7 +21,7 @@ import { getAllCountries, getStatesByCountry } from "@/requests/country-requests
 
 interface WeatherModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
-  modalOpen: boolean;
+  modalOpen?: boolean;
 }
 
 /**

@@ -1,10 +1,10 @@
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
-import userEvent from "@testing-library/user-event";
+// import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import axios from "axios";
-import { toast } from "react-toastify";
+// import axios from "axios";
+// import { toast } from "react-toastify";
 import { WeatherPredictionsByDate } from "@/components/WeatherPredictionsByDate";
 
 
@@ -17,7 +17,7 @@ jest.mock("react-toastify", () => ({
   },
 }));
 
-const mockAxios = axios as jest.Mocked<typeof axios>;
+// const mockAxios = axios as jest.Mocked<typeof axios>;
 
 describe("WeatherPredictionsByDate", () => {
   const setModalOpen = jest.fn();
