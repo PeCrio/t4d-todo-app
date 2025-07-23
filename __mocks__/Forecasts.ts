@@ -1,4 +1,4 @@
-import axiosInstance from "@/api/axios";
+import axiosInstance from "@/app/api/axios";
 
 async function getWeatherForeCast(location: string){
     const res = await axiosInstance.get(

@@ -17,7 +17,7 @@ import {
 } from "@/types/ListTypes";
 import { toast } from "react-toastify";
 import { getISODateFormat } from "@/utils/Formatters";
-import axiosInstance from "@/api/axios";
+import axiosInstance from "@/app/api/axios";
 
 import { Input, Select, DynamicIcons, Button } from "./ui";
 

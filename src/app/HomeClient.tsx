@@ -127,14 +127,17 @@ export const HomeClient = () => {
                     )}
                 </div>
             </main>
-            <Overlay isOpen={modalOpen}>
-                <TodoFormModal
-                    setModalOpen={setModalOpen}
-                    refreshTodoList={refreshTodoList}
-                    mode={mode}
-                    setMode={setMode}
-                />
-            </Overlay>
+            {
+                modalOpen ?
+                <Overlay isOpen={modalOpen}>
+                    <TodoFormModal
+                        setModalOpen={setModalOpen}
+                        refreshTodoList={refreshTodoList}
+                        mode={mode}
+                        setMode={setMode}
+                    />
+                </Overlay> : <></>
+            }
             <Overlay isOpen={weatherModalOpen}>
                 <WeatherPredictionsByDate
                     setModalOpen={setWeatherModalOpen}

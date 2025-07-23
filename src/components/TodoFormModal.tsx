@@ -19,7 +19,7 @@ import {
 } from "react";
 import { toast } from "react-toastify";
 import countriesDetailsRaw from "@/data/countries.json";
-import axiosInstance from "@/api/axios";
+import axiosInstance from "@/app/api/axios";
 import { getISODateFormat } from "@/utils/Formatters";
 import DeletePrompt from "./DeletePrompt";
 
@@ -27,6 +27,7 @@ import { Button } from "./ui/Button";
 import { DynamicIcons } from "./ui/DynamicIcons";
 import { TodoForm } from "./TodoForm";
 import { OutdoorEventWeather } from "./OutdoorEventWeather";
+import { getAllCountries } from "@/requests/country-requests";
 
 interface TodoFormModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -78,10 +79,22 @@ export const TodoFormModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isWeatherLoading, setIsWeatherLoading] = useState(false);
+  const [countryData, setCountryData] = useState([])
   const countriesDetails = countriesDetailsRaw as ICountryStructure[];
 
   const id = crypto.randomUUID();
   const domId = useId();
+
+  const fetchCountries = async () =>{
+    const allCountries = await getAllCountries();
+    setCountryData(allCountries)
+    console.log(allCountries)
+  }
+  
+  useEffect(()=>{
+    fetchCountries();
+    console.log(countryData)
+  },[])
 
   useEffect(() => {
     setCountries(countriesDetails as ICountryStructure[]);
