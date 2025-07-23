@@ -15,10 +15,10 @@ interface Props {
   status: string;
   completed: boolean;
   refreshTodoList: () => void;
-  moveTaskToStatus: (id: string | number) => void;
+  handleTaskDrag: (id: string | number) => void;
 }
 
-const StatusDiv = ({ status, completed, data, refreshTodoList, moveTaskToStatus }: Props) => {
+const StatusDiv = ({ status, completed, data, refreshTodoList, handleTaskDrag }: Props) => {
   const [isPopupOpen, setIsPopupOpen] = useState<Record<string, boolean>>({});
   const [todoItemId, setTodoItemId] = useState<string | number>("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -30,7 +30,7 @@ const StatusDiv = ({ status, completed, data, refreshTodoList, moveTaskToStatus 
     accept: "TODO_ITEM",
     drop: (draggedItem: { id: string | number; completed: boolean }) => {
       if (draggedItem.completed !== completed) {
-        moveTaskToStatus(draggedItem.id);
+        handleTaskDrag(draggedItem.id);
       }
     },
     collect: (monitor) => ({

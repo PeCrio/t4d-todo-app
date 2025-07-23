@@ -81,12 +81,12 @@ export const HomeClient = () => {
 
     const queries = ['Today', 'Pending', 'All Tasks', 'Past Due-Date'];
     
-    const moveTaskToStatus = (id: string | number) => {
+    const handleTaskDrag = (id: string | number) => {
         try {
             const todos = LocalStorageService.get<IListStructure[]>();
             const updatedTodos = todos?.map(todo => {
                 if (todo.id === id) {
-                    toast.success(`Success! "${todo.name}" is currently ${!todo.completed ? "completed" : "not completed"}.`);
+                    toast.success(`Status changed — ${!todo.completed ? "task completed!" : "task is yet to be completed."}`);
                     return { ...todo, completed: !todo.completed };
                 }
                 return todo;
@@ -138,8 +138,8 @@ export const HomeClient = () => {
                             </div>
                         ) : allTodoList && allTodoList.length > 0 ? (
                             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-[20px]">
-                                <StatusDiv data={todo} completed={false} status="Todo" refreshTodoList={refreshTodoList} moveTaskToStatus={moveTaskToStatus} />
-                                <StatusDiv data={completed} completed={true} status="Completed" refreshTodoList={refreshTodoList} moveTaskToStatus={moveTaskToStatus} />
+                                <StatusDiv data={todo} completed={false} status="Todo" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
+                                <StatusDiv data={completed} completed={true} status="Completed" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
                             </div>
                         ) : (
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
