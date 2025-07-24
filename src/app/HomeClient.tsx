@@ -7,12 +7,12 @@ import TodoFormModal from "@/components/TodoFormModal";
 import { LocalStorageService } from "@/utils/LocalStorageService";
 import { useFilter } from "@/store/FilterContext";
 import { getISODateFormat } from "@/utils/Formatters";
-import { toast } from "react-toastify";
 import { useTag } from "@/store/TagContext";
 import { WeatherPredictionsByDate } from "@/components/WeatherPredictionsByDate";
 import { dummyData } from "@/data/dummy-list";
 import { DynamicIcons } from "@/components/ui/DynamicIcons";
 import { Overlay } from "@/components/ui";
+import { toast } from "react-toastify";
 
 export const HomeClient = () => {
     const [completed, setCompleted] = useState<IListStructure[]>([]);

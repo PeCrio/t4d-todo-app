@@ -1,9 +1,15 @@
-"use client";
+'use client';
 
-import { toast } from "react-toastify";
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
-export default function ErrorBoundary({ error }:{ error:Error }){
-    return(
-        toast.error(error.message)
-    )
+export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
+
+  useEffect(() => {
+    toast.error(error.message || "An unexpected error occurred.");
+  }, [error, reset]);
+
+  return (
+    <div className="hidden" />
+  );
 }

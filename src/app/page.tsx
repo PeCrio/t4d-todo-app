@@ -1,7 +1,11 @@
 
 
 import { HomeClient } from "./HomeClient"; 
-
-export default function Home() {
+// import { getAllCountries } from "@/requests/country-requests";
+export default async function Home() {
+  // const getCountries = await getAllCountries();
+  // if(!getCountries){
+  //     throw new Error('Fired')
+  // }
   return <HomeClient />;
 }
