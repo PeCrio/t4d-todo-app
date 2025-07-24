@@ -13,6 +13,8 @@ import { WeatherPredictionsByDate } from "@/components/WeatherPredictionsByDate"
 import { dummyData } from "@/data/dummy-list";
 import { DynamicIcons } from "@/components/ui/DynamicIcons";
 import { Overlay } from "@/components/ui";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
 
 export const HomeClient = () => {
     const [completed, setCompleted] = useState<IListStructure[]>([]);
@@ -78,57 +80,74 @@ export const HomeClient = () => {
     }
 
     const queries = ['Today', 'Pending', 'All Tasks', 'Past Due-Date'];
+    
+    const handleTaskDrag = (id: string | number) => {
+        try {
+            const todos = LocalStorageService.get<IListStructure[]>();
+            const updatedTodos = todos?.map(todo => {
+                if (todo.id === id) {
+                    toast.success(`Status changed — ${!todo.completed ? "task completed!" : "task is yet to be completed."}`);
+                    return { ...todo, completed: !todo.completed };
+                }
+                return todo;
+            });
+            
+            LocalStorageService.set(updatedTodos);
+            refreshTodoList();
+        } catch (err) {
+            toast.error((err as Error).message);
+        }
+    };
 
     return (
-        <div className="w-full">
-            <main className="w-full py-4">
-                <div className="flex justify-end gap-[20px]">
-                    <div
-                        className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95"
-                        onClick={() => setWeatherModalOpen(true)}
-                    >
-                        <span><DynamicIcons iconName="fluent:weather-hail-night-48-regular" /></span>
-                        <span>Get Weather Predictions</span>
-                    </div>
-                    <div
-                        className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95"
-                        onClick={addNewTask}
-                    >
-                        <span><DynamicIcons iconName="bitcoin-icons:plus-filled" /></span>
-                        <span>Add New Task</span>
-                    </div>
-                </div>
-                <div className="flex items-center justify-between todo-task-div">
-                    {queries.map((query) => (
-                        <span
-                            key={query}
-                            onClick={() => setSelectedFilterQuery(query)}
-                            className={`${query.toLowerCase() === selectedFilterQuery?.toLowerCase() ? 'text-theme-orange font-semibold' : 'text-theme-blue'}`}
+        <DndProvider backend={HTML5Backend}>
+            <div className="w-full">
+                <main className="w-full py-4">
+                    <div className="flex justify-end gap-[20px]">
+                        <div
+                            className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95"
+                            onClick={() => setWeatherModalOpen(true)}
                         >
-                            {query}
-                        </span>
-                    ))}
-                </div>
-                <div>
-                    <p className="text-xl text-theme-blue font-semibold py-4">Todo Lists</p>
-                    {pageLoading ? (
-                        <div className="w-full relative h-[40vh]">
-                            <div className="loader w-full m-auto"></div>
+                            <span><DynamicIcons iconName="fluent:weather-hail-night-48-regular" /></span>
+                            <span>Get Weather Predictions</span>
                         </div>
-                    ) : allTodoList && allTodoList.length > 0 ? (
-                        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-[20px]">
-                            <StatusDiv data={todo} status="Todo" refreshTodoList={refreshTodoList} />
-                            <StatusDiv data={completed} status="Completed" refreshTodoList={refreshTodoList} />
+                        <div
+                            className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95"
+                            onClick={addNewTask}
+                        >
+                            <span><DynamicIcons iconName="bitcoin-icons:plus-filled" /></span>
+                            <span>Add New Task</span>
                         </div>
-                    ) : (
-                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
-                            No data found
-                        </div>
-                    )}
-                </div>
-            </main>
-            {
-                modalOpen ?
+                    </div>
+                    <div className="flex items-center justify-between todo-task-div">
+                        {queries.map((query) => (
+                            <span
+                                key={query}
+                                onClick={() => setSelectedFilterQuery(query)}
+                                className={`${query.toLowerCase() === selectedFilterQuery?.toLowerCase() ? 'text-theme-orange font-semibold' : 'text-theme-blue'}`}
+                            >
+                                {query}
+                            </span>
+                        ))}
+                    </div>
+                    <div>
+                        <p className="text-xl text-theme-blue font-semibold py-4">Todo Lists</p>
+                        {pageLoading ? (
+                            <div className="w-full relative h-[40vh]">
+                                <div className="loader w-full m-auto"></div>
+                            </div>
+                        ) : allTodoList && allTodoList.length > 0 ? (
+                            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-[20px]">
+                                <StatusDiv data={todo} completed={false} status="Todo" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
+                                <StatusDiv data={completed} completed={true} status="Completed" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
+                            </div>
+                        ) : (
+                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
+                                No data found
+                            </div>
+                        )}
+                    </div>
+                </main>
                 <Overlay isOpen={modalOpen}>
                     <TodoFormModal
                         setModalOpen={setModalOpen}
@@ -137,17 +156,14 @@ export const HomeClient = () => {
                         setMode={setMode}
                         modalOpen={modalOpen}
                     />
-                </Overlay> : <></>
-            }
-            {
-                weatherModalOpen &&
+                </Overlay>
                 <Overlay isOpen={weatherModalOpen}>
                     <WeatherPredictionsByDate
                         setModalOpen={setWeatherModalOpen}
                         modalOpen={weatherModalOpen}
                     />
                 </Overlay>
-            }
-        </div>
+            </div>
+        </DndProvider>
     );
 };

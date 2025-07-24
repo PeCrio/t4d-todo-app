@@ -1,9 +1,9 @@
 
 import type { Metadata } from "next";
 import "./globals.css";
-import LayoutWrapper from "@/components/Layout/LayoutWrapper";
 import ToasterProvider from "@/components/provider/ToasterProvider";
 import { CombinedProviders } from "@/components/provider/CombinedProvider";
+import LayoutWrapper from "@/components/Layout/LayoutWrapper";
 
 
 export const metadata: Metadata = {
@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={`antialiased relative h-screen flex flex-col lg:flex-row`}>
         <CombinedProviders>
           <LayoutWrapper>
-            {children}
+              {children}
             <ToasterProvider />
           </LayoutWrapper>
         </CombinedProviders>
