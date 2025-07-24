@@ -8,7 +8,7 @@ import {
   IWeatherWithDateStructure,
 } from "@/types/ListTypes";
 import { LocalStorageService } from "@/utils/LocalStorageService";
-import React, {
+import {
   useState,
   Dispatch,
   SetStateAction,
@@ -16,13 +16,15 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { DynamicIcons } from "./ui";
 import { toast } from "react-toastify";
-import Image from "next/image";
 import axiosInstance from "@/app/api/axios";
 import { getISODateFormat } from "@/utils/Formatters";
-import SingleWeatherDetails from "./SingleWeatherDetails";
 import DeletePrompt from "./DeletePrompt";
+
+import { Button } from "./ui/Button";
+import { DynamicIcons } from "./ui/DynamicIcons";
+import { TodoForm } from "./TodoForm";
+import { OutdoorEventWeather } from "./OutdoorEventWeather";
 import { getAllCountries, getStatesByCountry } from "@/requests/country-requests";
 
 interface TodoFormModalProps {
@@ -34,19 +36,19 @@ interface TodoFormModalProps {
   modalOpen?: boolean;
 }
 
-const TodoFormModal = ({
+export const TodoFormModal = ({
   setModalOpen,
   todoItemId,
   refreshTodoList,
   mode,
-  modalOpen,
+  modalOpen
 }: TodoFormModalProps) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [subTaskLength, setSubTaskLength] = useState(1);
   const [countries, setCountries] = useState<ICountryStructure[]>([]);
   const [states, setStates] = useState<IStateStructure[]>([]);
   const [weather, setWeather] = useState<
-    IWeatherStructure | IWeatherWithDateStructure
+    IWeatherStructure | IWeatherWithDateStructure | undefined
   >();
 
   const defaultFormState = {
@@ -55,7 +57,7 @@ const TodoFormModal = ({
     date: "",
     tag: "",
     hasSubTasks: false,
-    subTasks: [""],
+    subTasks: [""] as string[],
     isAnOutDoorEvent: false,
     country: "",
     state: "",
@@ -112,48 +114,89 @@ const TodoFormModal = ({
     }
   }, [country]);
 
+  // useEffect(() => {
+  //   setCountries(countriesDetails as ICountryStructure[]);
+  //   if (countriesDetails.length > 0 && form.country === "") {
+  //     setForm((prev) => ({
+  //       ...prev,
+  //       country: countriesDetails[0]?.name || "",
+  //     }));
+  //   }
+  // }, []);
+
+  // const getStates = useCallback(() => {
+  //   const filteredState = countries.find(
+  //     (filteredCountry) => filteredCountry.name === country
+  //   )?.states;
+  //   setStates(filteredState || []);
+  //   setForm((prev) => ({ ...prev, state: filteredState?.[0]?.name || "" }));
+  // }, [countries, country]);
+
+  // useEffect(() => {
+  //   if (country) {
+  //     getStates();
+  //   }
+  // }, [country, getStates]);
+
   useEffect(() => {
     const preExistingData = LocalStorageService.get<IListStructure[]>();
 
-    if (todoItemId) {
-      const currentTodoItem = preExistingData?.find(
+    if (todoItemId && preExistingData) {
+      const currentTodoItem = preExistingData.find(
         (item) => item.id === todoItemId
       );
       if (currentTodoItem) {
-        const isoDateFormat = currentTodoItem
-          ? new Date(currentTodoItem?.date).toISOString().split("T")[0]
+        const isoDateFormat = currentTodoItem.date
+          ? new Date(currentTodoItem.date).toISOString().split("T")[0]
           : "";
-        setSubTaskLength(currentTodoItem?.subTasks?.length ?? 1);
+        setSubTaskLength(currentTodoItem.subTasks?.length ?? 1);
         setWeather(currentTodoItem.weather);
+
+        const weatherAddressParts =
+          currentTodoItem.weather?.address?.split(",");
+        const weatherStateName = weatherAddressParts?.[0]?.trim() || "";
+        const weatherCountryName = weatherAddressParts?.[1]?.trim() || "";
+
+        const initialCountry =
+          countries.find((c) => c.name === weatherCountryName)?.name || "";
+        const initialStatesForCountry =
+          countries.find((c) => c.name === initialCountry)?.states || [];
+        const initialState =
+          initialStatesForCountry.find((s) => s.name === weatherStateName)
+            ?.name || "";
+
         setForm((prev) => ({
           ...prev,
-          name: currentTodoItem?.name,
-          completed: currentTodoItem?.completed,
-          hasSubTasks: currentTodoItem?.has_subtask,
-          subTasks: currentTodoItem?.subTasks ?? [""],
-          description: currentTodoItem?.description,
+          name: currentTodoItem.name,
+          completed: currentTodoItem.completed,
+          hasSubTasks: currentTodoItem.has_subtask,
+          subTasks: currentTodoItem.subTasks ?? [""],
+          description: currentTodoItem.description,
           date: isoDateFormat,
-          tag: currentTodoItem?.tag,
-          isAnOutDoorEvent: !!currentTodoItem?.weather,
-          country: countries.find((country)=> country.name === currentTodoItem.weather?.address.split(',')[1])?.name || '',
-          state: states.find((state)=> state.name === currentTodoItem.weather?.address.split(',')[0])?.name || ''
+          tag: currentTodoItem.tag,
+          isAnOutDoorEvent: !!currentTodoItem.weather,
+          country: initialCountry,
+          state: initialState,
         }));
       }
     }
-  }, [todoItemId]);
-  
+  }, [todoItemId, countries, states]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const preExistingData = LocalStorageService.get<IListStructure[]>();
-    const currentTodoItem = preExistingData?.find(
-      (item) => item.id === todoItemId
-    );
 
-    if (!isFormValid) return;
+    if (!isFormValid) {
+      toast.error("Please fill all required fields.");
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const preExistingData = LocalStorageService.get<IListStructure[]>();
+      const preExistingData = LocalStorageService.get<IListStructure[]>() || [];
+      const currentTodoItem = preExistingData.find(
+        (item) => item.id === todoItemId
+      );
+
       const data = {
         name,
         description,
@@ -161,24 +204,23 @@ const TodoFormModal = ({
         tag,
         has_subtask: hasSubTasks,
         completed: todoItemId ? currentTodoItem?.completed : false,
-        ...(hasSubTasks && { subTasks }),
-        ...(form.isAnOutDoorEvent && weather ? { weather } : {})
+        ...(hasSubTasks && { subTasks: subTasks.filter(Boolean) }),
+        ...(isAnOutDoorEvent && weather ? { weather } : {}),
       };
 
       if (todoItemId) {
-        const updatedList = (preExistingData || []).map((item) =>
+        const updatedList = preExistingData.map((item) =>
           item.id === todoItemId ? { ...item, ...data } : item
         );
-
         LocalStorageService.set(updatedList);
         toast.success("Successfully updated To-do item.");
       } else {
         const payload = {
           ...data,
           id,
-        };
+        } as IListStructure;
 
-        LocalStorageService.set([...(preExistingData || []), payload]);
+        LocalStorageService.set([...preExistingData, payload]);
         toast.success("Successfully added To-do item.");
       }
 
@@ -186,7 +228,7 @@ const TodoFormModal = ({
       setForm(defaultFormState);
       refreshTodoList();
     } catch (e) {
-      toast.error((e as Error).message);
+      toast.error((e as Error).message || "An error occurred.");
     } finally {
       setIsLoading(false);
     }
@@ -198,10 +240,8 @@ const TodoFormModal = ({
       .filter(Boolean);
     setIsFormValid(
       (!form.hasSubTasks || validSubTasks.length > 0) &&
-        form.date !== "" &&
+        form.date.trim() !== "" &&
         form.name.trim() !== ""
-        ? true
-        : false
     );
   }, [form.name, form.date, form.hasSubTasks, form.subTasks]);
 
@@ -215,10 +255,12 @@ const TodoFormModal = ({
   };
 
   const removeSubTask = (index: number) => {
-    subTasks.splice(index, 1);
+    const newSubTasks = [...subTasks];
+    newSubTasks.splice(index, 1);
+    setForm((prev) => ({ ...prev, subTasks: newSubTasks }));
     setSubTaskLength((prev) => prev - 1);
 
-    if (subTaskLength == 1) {
+    if (newSubTasks.length === 0) {
       setForm((prev) => ({ ...prev, hasSubTasks: false }));
     }
   };
@@ -231,6 +273,7 @@ const TodoFormModal = ({
         LocalStorageService.set(updatedLists);
         refreshTodoList();
         toast.info("To-do item has been successfully deleted!");
+        setModalOpen(false);
       } catch (err) {
         toast.error(
           (err as Error).message || "To-do item could not be deleted!"
@@ -241,20 +284,30 @@ const TodoFormModal = ({
 
   const getWeatherForeCast = async () => {
     try {
-        setIsWeatherLoading(true);
+      setIsWeatherLoading(true);
       const location =
         state && country ? `${state},${country}` : country || state || "";
-        const date = form.date ? getISODateFormat(form.date) : '';
+      const eventDate = form.date ? getISODateFormat(form.date) : "";
+
+      if (!location || !eventDate) {
+        toast.error(
+          "Please select a country, state (if applicable), and a due date to get a forecast."
+        );
+        setIsWeatherLoading(false);
+        return;
+      }
+
       const res = await axiosInstance.get(
-        `${location}/${date}?unitGroup=metric&key=${
-          process.env.NEXT_PUBLIC_API_KEY
-        }`
+        `${location}/${eventDate}?unitGroup=metric&key=${process.env.NEXT_PUBLIC_API_KEY}`
       );
       setWeather(res.data);
+      toast.success("Weather forecast fetched!");
     } catch (err) {
-      toast.error((err as Error).message || "Something went wrong");
-    } finally{
-        setIsWeatherLoading(false);
+      toast.error(
+        (err as Error).message || "Failed to fetch weather forecast."
+      );
+    } finally {
+      setIsWeatherLoading(false);
     }
   };
 
@@ -265,256 +318,73 @@ const TodoFormModal = ({
           mode !== "delete" ? "w-full" : ""
         } relative mx-auto`}
       >
-        <div
-          className={`-top-[20px] -right-[40px] absolute`}
-          onClick={() => setModalOpen(false)}
-        >
-          <DynamicIcons iconName="iconoir:cancel" className="text-[28px] text-theme-blue cursor-pointer bg-white rounded-full" />
-        </div>
-
         {(mode === "add" || mode === "edit") && (
           <div className="bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll">
+            {/* Cancel icon inside modal */}
+            <div
+              className="flex items-end justify-end pt-2"
+              onClick={() => setModalOpen(false)}
+            >
+              <DynamicIcons
+                iconName="iconoir:cancel"
+                className="text-[28px] text-theme-blue cursor-pointer bg-red rounded-full"
+              />
+            </div>
             <p className="text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white">
-              {`${mode === "edit" ? "Edit" : "Add"} Todo List`}{" "}
+              {`${mode === "edit" ? "Edit" : "Add"} Todo List`}
             </p>
-            <form className="p-6 custom-scrollbar2" onSubmit={handleSubmit}>
-              <div className="flex flex-col gap-[20px]">
-                <div className="w-full flex flex-col">
-                  <span className="pb-1">
-                    Name<span className="text-red-500">*</span>
-                  </span>
-                  <input
-                    type="text"
-                    value={name}
-                    placeholder="Enter Name"
-                    className="inputDiv rounded-md"
-                    onChange={(e) =>
-                      setForm((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                  />
-                </div>
-                <div className="w-full flex flex-col">
-                  <span className="pb-1">Description</span>
-                  <textarea
-                    rows={4}
-                    value={description}
-                    placeholder="Enter Description"
-                    className="inputDiv rounded-md"
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                  ></textarea>
-                </div>
-                <div className="flex gap-[20px] w-full">
-                  <div className="flex flex-col w-full">
-                    <span>
-                      Due Date<span className="text-red-500">*</span>
-                    </span>
-                    <input
-                      type="date"
-                      value={date}
-                      className="inputDiv rounded-md"
-                      onChange={(e) =>
-                        setForm((prev) => ({ ...prev, date: e.target.value }))
-                      }
-                    />
-                  </div>
-                  <div className="flex flex-col w-full">
-                    <span>Tag</span>
-                    <input
-                      type="text"
-                      value={tag}
-                      className="inputDiv rounded-md"
-                      placeholder="Enter Tag"
-                      onChange={(e) =>
-                        setForm((prev) => ({ ...prev, tag: e.target.value }))
-                      }
-                    />
-                  </div>
-                </div>
-                <div>
-                  <div className="flex items-center justify-between gap-[5px]">
-                    <div className="flex items-center gap-[5px]">
-                      <input
-                        type="checkbox"
-                        className="rounded-md"
-                        checked={hasSubTasks}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            hasSubTasks: e.target.checked,
-                          }))
-                        }
-                        id={`subtask-${domId}`}
-                        name="subtask"
-                      />
-                      <label
-                        className="text-[15px] cursor-pointer"
-                        htmlFor={`subtask-${domId}`}
-                      >
-                        Has Subtasks?{" "}
-                        {hasSubTasks && <span className="text-red-500">*</span>}
-                      </label>
-                    </div>
-                    {hasSubTasks && (
-                      <div
-                        className="flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer"
-                        onClick={() => {
-                          setSubTaskLength((prev) => prev + 1);
-                          setForm((prev) => ({
-                            ...prev,
-                            subTasks: [...prev.subTasks, ""],
-                          }));
-                        }}
-                      >
-                        <DynamicIcons iconName="gridicons:plus" width={15} height={15} />
-                      </div>
-                    )}
-                  </div>
-                  <>
-                    {hasSubTasks && subTaskLength > 0 ? (
-                      Array.from({ length: subTaskLength }).map((_, index) => (
-                        <div
-                          key={index}
-                          className="flex gap-[10px] flex-col py-2"
-                        >
-                          <div className="flex items-center gap-[10px]">
-                            <input
-                              type="text"
-                              value={subTasks[index]}
-                              className="inputDiv w-full rounded-md"
-                              placeholder="Enter SubTask"
-                              onChange={(e) => addSubTasks(index, e)}
-                            />
-                            <div
-                              className="flex gap-[3px] items-center bg-theme-blue text-white rounded-md px-4 py-2 w-fit cursor-pointer"
-                              onClick={() => removeSubTask(index)}
-                            >
-                                <DynamicIcons iconName="cil:minus" width={18} height={18} />
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <></>
-                    )}
-                  </>
-                  <div className="flex items-center gap-[5px] pt-2">
-                    <input
-                      type="checkbox"
-                      className="rounded-md"
-                      checked={isAnOutDoorEvent}
-                      name="isAnOutDoorEvent"
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          isAnOutDoorEvent: e.target.checked,
-                        }))
-                      }
-                      id={`outdoor-${domId}`}
-                    />
-                    <label
-                      className="text-[15px] cursor-pointer"
-                      htmlFor={`outdoor-${domId}`}
-                    >
-                      Is this an outdoor event
-                    </label>
-                  </div>
-                  <div className="py-4">
-                    {(isAnOutDoorEvent || weather) && (
-                      <>
-                        <div className="relative">
-                          <select
-                            className="border border-theme-blue rounded-md p-2 outline-none w-full"
-                            onChange={(e) =>{
-                              setForm((prev) => ({
-                                ...prev,
-                                country: e.target.value,
-                              }));
 
-                            }
-                            }
-                            value={form.country}
-                          >
-                            {countries.map((country) => (
-                              <option key={country.id}>{country.name}</option>
-                            ))}
-                          </select>
-                          <Image
-                            src="/images/arrow-down.png"
-                            alt=""
-                            height={20}
-                            width={20}
-                            className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-                          />
-                        </div>
-                        <div className="relative py-4">
-                          <select
-                            className="border border-theme-blue rounded-md p-2 outline-none w-full"
-                            onChange={(e) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                state: e.target.value,
-                              }))
-                            }
-                            value={form.state}
-                          >
-                            {states?.length > 0 ? (
-                              states.map((state) => (
-                                <option key={state.id}>{state.name}</option>
-                              ))
-                            ) : (
-                              <option>No State to select from</option>
-                            )}
-                          </select>
-                          <Image
-                            src="/images/arrow-down.png"
-                            alt=""
-                            height={20}
-                            width={20}
-                            className="pointer-events-none absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4"
-                          />
-                        </div>
-                        <SingleWeatherDetails weather={weather}/>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
+            <form className="p-6 custom-scrollbar2" onSubmit={handleSubmit}>
+              <TodoForm
+                form={form}
+                setForm={setForm}
+                domId={domId}
+                subTaskLength={subTaskLength}
+                setSubTaskLength={setSubTaskLength}
+                addSubTasks={addSubTasks}
+                removeSubTask={removeSubTask}
+              />
+
+              <OutdoorEventWeather
+                isAnOutDoorEvent={isAnOutDoorEvent}
+                setIsAnOutDoorEvent={(checked) =>
+                  setForm((prev) => ({ ...prev, isAnOutDoorEvent: checked }))
+                }
+                domId={domId}
+                countries={countries}
+                states={states}
+                country={country}
+                state={state}
+                setForm={setForm}
+                weather={weather}
+                getWeatherForeCast={getWeatherForeCast}
+                isWeatherLoading={isWeatherLoading}
+              />
+
               <span className="text-[12px]">
                 (N:B: You have to fill all required{" "}
                 <span className="text-red-500">*</span> field to submit)
               </span>
-              <div className="pt-4 flex gap-[20px] justify-end">
-                {isAnOutDoorEvent && (
-                  <div className="" onClick={()=>getWeatherForeCast()}>
-                    <button type="button"
-                      className={`px-4 py-2 rounded-md text-white text-[14px] bg-theme-blue cursor-pointer`}
-                    >
-                      {isWeatherLoading ? "Loading..." : "See Forecast"}
-                    </button>
-                  </div>
-                )}
-                <div className="">
-                  <button
-                    className={`px-4 py-2 rounded-md text-white text-[14px] ${
-                      isFormValid
-                        ? "bg-theme-blue cursor-pointer"
-                        : "bg-[#cac9c9] cursor-not-allowed"
-                    }`}
-                  >
-                    {isLoading ? "Loading..." : "Save"}
-                  </button>
-                </div>
+              <div className="flex items-center justify-end mt-4">
+                <Button
+                  type="submit"
+                  className={`
+                    ${!isFormValid ? "bg-[#cac9c9]" : "bg-theme-blue"}
+                    ${isFormValid && !isLoading ? "cursor-pointer" : "cursor-not-allowed"}
+                  `}
+                  isLoading={isLoading}
+                  disabled={!isFormValid || isLoading}
+                >
+                  Save
+                </Button>
               </div>
             </form>
           </div>
         )}
 
-        {mode === "delete" && <DeletePrompt isLoading={isLoading} handleDelete={handleDelete} />}
+        {mode === "delete" && (
+          <DeletePrompt isLoading={isLoading} handleDelete={handleDelete} />
+        )}
       </div>
     </div>
   );
