@@ -114,30 +114,6 @@ export const TodoFormModal = ({
     }
   }, [country]);
 
-  // useEffect(() => {
-  //   setCountries(countriesDetails as ICountryStructure[]);
-  //   if (countriesDetails.length > 0 && form.country === "") {
-  //     setForm((prev) => ({
-  //       ...prev,
-  //       country: countriesDetails[0]?.name || "",
-  //     }));
-  //   }
-  // }, []);
-
-  // const getStates = useCallback(() => {
-  //   const filteredState = countries.find(
-  //     (filteredCountry) => filteredCountry.name === country
-  //   )?.states;
-  //   setStates(filteredState || []);
-  //   setForm((prev) => ({ ...prev, state: filteredState?.[0]?.name || "" }));
-  // }, [countries, country]);
-
-  // useEffect(() => {
-  //   if (country) {
-  //     getStates();
-  //   }
-  // }, [country, getStates]);
-
   useEffect(() => {
     const preExistingData = LocalStorageService.get<IListStructure[]>();
 
