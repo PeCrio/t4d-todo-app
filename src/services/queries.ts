@@ -1,9 +1,11 @@
 import axios from "axios"
 import { toast } from "react-toastify";
+import { getBaseUrl } from "@/utils/Constants";
 
+const baseUrl = getBaseUrl();
 export async function getAllCountries(){
     try{
-        const { data } = await axios.get('http://localhost:3000/api/countries');
+        const { data } = await axios.get(`${baseUrl}/api/countries`);
         if(data){
             return data.data;
         }
@@ -14,7 +16,7 @@ export async function getAllCountries(){
 
 export async function getStatesByCountry(id: number){
     try{
-        const { data } = await axios.get(`http://localhost:3000/api/countries/${id}/states`);
+        const { data } = await axios.get(`${baseUrl}/api/countries/${id}/states`);
         if(data){
             return data.data;
         }

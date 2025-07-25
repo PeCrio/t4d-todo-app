@@ -17,7 +17,7 @@ import { getISODateFormat } from "@/utils/Formatters";
 import axiosInstance from "@/app/api/axios";
 
 import { Input, Select, DynamicIcons, Button } from "./ui";
-import { getAllCountries, getStatesByCountry } from "@/requests/country-requests";
+import { getAllCountries, getStatesByCountry } from "@/services/queries";
 
 interface WeatherModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
