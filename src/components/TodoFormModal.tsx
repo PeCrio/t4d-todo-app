@@ -25,7 +25,7 @@ import { Button } from "./ui/Button";
 import { DynamicIcons } from "./ui/DynamicIcons";
 import { TodoForm } from "./TodoForm";
 import { OutdoorEventWeather } from "./OutdoorEventWeather";
-import { getAllCountries, getStatesByCountry } from "@/requests/country-requests";
+import { getAllCountries, getStatesByCountry } from "@/services/queries";
 
 interface TodoFormModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
