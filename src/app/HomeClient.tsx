@@ -138,8 +138,8 @@ export const HomeClient = () => {
                             </div>
                         ) : allTodoList && allTodoList.length > 0 ? (
                             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-[20px]">
-                                <StatusDiv data={todo} completed={false} status="Todo" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
-                                <StatusDiv data={completed} completed={true} status="Completed" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
+                                <StatusDiv modalOpen={modalOpen} data={todo} completed={false} status="Todo" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
+                                <StatusDiv modalOpen={modalOpen} data={completed} completed={true} status="Completed" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
                             </div>
                         ) : (
                             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
@@ -154,11 +154,13 @@ export const HomeClient = () => {
                         refreshTodoList={refreshTodoList}
                         mode={mode}
                         setMode={setMode}
+                        modalOpen={modalOpen}
                     />
                 </Overlay>
                 <Overlay isOpen={weatherModalOpen}>
                     <WeatherPredictionsByDate
                         setModalOpen={setWeatherModalOpen}
+                        modalOpen={weatherModalOpen}
                     />
                 </Overlay>
             </div>

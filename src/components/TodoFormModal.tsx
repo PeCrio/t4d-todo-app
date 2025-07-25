@@ -17,8 +17,7 @@ import {
   useCallback,
 } from "react";
 import { toast } from "react-toastify";
-import countriesDetailsRaw from "@/data/countries.json";
-import axiosInstance from "@/api/axios";
+import axiosInstance from "@/app/api/axios";
 import { getISODateFormat } from "@/utils/Formatters";
 import DeletePrompt from "./DeletePrompt";
 
@@ -26,6 +25,7 @@ import { Button } from "./ui/Button";
 import { DynamicIcons } from "./ui/DynamicIcons";
 import { TodoForm } from "./TodoForm";
 import { OutdoorEventWeather } from "./OutdoorEventWeather";
+import { getAllCountries, getStatesByCountry } from "@/services/queries";
 
 interface TodoFormModalProps {
   setModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -33,6 +33,7 @@ interface TodoFormModalProps {
   todoItemId?: string | number;
   refreshTodoList: () => void;
   mode: "add" | "edit" | "delete";
+  modalOpen?: boolean;
 }
 
 export const TodoFormModal = ({
@@ -40,6 +41,7 @@ export const TodoFormModal = ({
   todoItemId,
   refreshTodoList,
   mode,
+  modalOpen
 }: TodoFormModalProps) => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [subTaskLength, setSubTaskLength] = useState(1);
@@ -77,34 +79,40 @@ export const TodoFormModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isWeatherLoading, setIsWeatherLoading] = useState(false);
-  const countriesDetails = countriesDetailsRaw as ICountryStructure[];
 
   const id = crypto.randomUUID();
   const domId = useId();
 
-  useEffect(() => {
-    setCountries(countriesDetails as ICountryStructure[]);
-    if (countriesDetails.length > 0 && form.country === "") {
-      setForm((prev) => ({
-        ...prev,
-        country: countriesDetails[0]?.name || "",
-      }));
+  // Fetching countries from the API
+  const fetchCountries = useCallback(async () => {
+    const allCountries = await getAllCountries();
+    setCountries(allCountries)
+    if (allCountries) {
+      setForm((prev) => ({ ...prev, country: allCountries[0]?.name }));
     }
   }, []);
 
-  const getStates = useCallback(() => {
-    const filteredState = countries.find(
-      (filteredCountry) => filteredCountry.name === country
-    )?.states;
-    setStates(filteredState || []);
-    setForm((prev) => ({ ...prev, state: filteredState?.[0]?.name || "" }));
-  }, [countries, country]);
+  useEffect(() => {
+  if (modalOpen) {
+    fetchCountries();
+  }
+}, [modalOpen]);
+
+  // Fetching states by country id
+  const fetchStates = async () =>{
+    const selectedCountryId = countries.find((region)=> region.name === country)?.id
+    const allStates = await getStatesByCountry(selectedCountryId as number);
+    setStates(allStates)
+    if(allStates){
+        setForm((prev) => ({ ...prev, state: allStates?.[0]?.name || '' }));
+    }
+  }
 
   useEffect(() => {
     if (country) {
-      getStates();
+      fetchStates();
     }
-  }, [country, getStates]);
+  }, [country]);
 
   useEffect(() => {
     const preExistingData = LocalStorageService.get<IListStructure[]>();
@@ -127,10 +135,9 @@ export const TodoFormModal = ({
 
         const initialCountry =
           countries.find((c) => c.name === weatherCountryName)?.name || "";
-        const initialStatesForCountry =
-          countries.find((c) => c.name === initialCountry)?.states || [];
+        
         const initialState =
-          initialStatesForCountry.find((s) => s.name === weatherStateName)
+          states.find((s) => s.name === weatherStateName)
             ?.name || "";
 
         setForm((prev) => ({
@@ -148,7 +155,7 @@ export const TodoFormModal = ({
         }));
       }
     }
-  }, [todoItemId, countries, states]);
+  }, [todoItemId]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
