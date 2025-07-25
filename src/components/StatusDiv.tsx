@@ -16,6 +16,7 @@ interface Props {
   completed: boolean;
   refreshTodoList: () => void;
   handleTaskDrag: (id: string | number) => void;
+  modalOpen?: boolean;
 }
 
 const StatusDiv = ({ status, completed, data, refreshTodoList, handleTaskDrag }: Props) => {
@@ -107,6 +108,7 @@ const StatusDiv = ({ status, completed, data, refreshTodoList, handleTaskDrag }:
           refreshTodoList={refreshTodoList}
           mode={mode}
           setMode={setMode}
+          modalOpen={modalOpen}
         />
       </Overlay>
     </div>

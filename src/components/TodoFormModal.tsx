@@ -135,10 +135,9 @@ export const TodoFormModal = ({
 
         const initialCountry =
           countries.find((c) => c.name === weatherCountryName)?.name || "";
-        const initialStatesForCountry =
-          countries.find((c) => c.name === initialCountry)?.states || [];
+        
         const initialState =
-          initialStatesForCountry.find((s) => s.name === weatherStateName)
+          states.find((s) => s.name === weatherStateName)
             ?.name || "";
 
         setForm((prev) => ({
@@ -156,7 +155,7 @@ export const TodoFormModal = ({
         }));
       }
     }
-  }, [todoItemId, countries, states]);
+  }, [todoItemId]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
