@@ -47,19 +47,23 @@ export const WeatherPredictionsByDate = ({
   };
 
   const [form, setForm] = useState(defaultFormState);
+  const [isDataFetching, setIsDataFetching] = useState(false);
 
   const { endDate, startDate, country, state } = form;
 
   // Get all countries from the API
   const fetchCountries = async () =>{
-    const countriesData = await getAllCountries();
-    setCountries(countriesData);
-    if (countriesData.length > 0) {
-      setForm((prev) => ({
-        ...prev,
-        country: countriesData[0]?.name || "",
-      }));
-    }
+    setIsDataFetching(true);
+    try{
+      const countriesData = await getAllCountries();
+      setCountries(countriesData);
+      if (countriesData.length > 0) {
+        setForm((prev) => ({
+          ...prev,
+          country: countriesData[0]?.name || "",
+        }));
+      }
+    }finally{}
   }
 
   useEffect(() => {
@@ -70,11 +74,15 @@ export const WeatherPredictionsByDate = ({
 
   // Get all states by country id from the API
   const fetchStates = async () => {
-    const selectedCountryId = countries.find((c) => c.name === country)?.id;
-    const allStates = await getStatesByCountry(selectedCountryId as number);
-    setStates(allStates);
-    if(allStates){
-      setForm((prev) => ({ ...prev, state: allStates?.[0]?.name || "" }));
+    try{
+      const selectedCountryId = countries.find((c) => c.name === country)?.id;
+      const allStates = await getStatesByCountry(selectedCountryId as number);
+      setStates(allStates);
+      if(allStates){
+        setForm((prev) => ({ ...prev, state: allStates?.[0]?.name || "" }));
+      }
+    }finally {
+      setIsDataFetching(false)
     }
   }
 
@@ -153,130 +161,137 @@ export const WeatherPredictionsByDate = ({
             Find the right weather for your outing
           </p>
 
-          <form className="px-6 py-5">
-            <div className="relative">
-              <Select
-                label="Country"
-                data-testid="country"
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, country: e.target.value }))
-                }
-                value={country}
-                options={countries.map((c) => ({
-                  value: c.name,
-                  label: c.name,
-                }))}
-              />
-            </div>
-
-            <div className="relative py-4">
-              <Select
-                label="State"
-                data-testid="state"
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, state: e.target.value }))
-                }
-                value={state}
-                options={
-                  states.length > 0
-                    ? states.map((s) => ({ value: s.name, label: s.name }))
-                    : [{ value: "", label: "No State to select from" }]
-                }
-                disabled={states.length === 0}
-              />
-            </div>
-
-            <div className="py-4">
-              <div className="flex w-full gap-[20px] flex-wrap sm:flex-nowrap">
-                <Input
-                  label="Start Date"
-                  data-testid="start-date"
-                  type="date"
-                  value={startDate}
-                  onChange={(e) =>
-                    setForm((prev) => ({
-                      ...prev,
-                      startDate: e.target.value,
-                    }))
-                  }
-                  required
-                />
-                <Input
-                  label="End Date"
-                  data-testid="end-date"
-                  type="date"
-                  value={endDate}
-                  onChange={(e) =>
-                    setForm((prev) => ({ ...prev, endDate: e.target.value }))
-                  }
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center pt-3 justify-between">
-              {form.weather.days?.length > 0 && (                
-                  <div className="relative py-4">
-                    <Select
-                      label="Filter by"
-                      data-testid="filter-condition"
-                      onChange={handleFiltering}
-                      options={[
-                        { value: "all", label: "Show All" },
-                        ...(allConditions?.map((condition) => ({
-                          value: condition,
-                          label: condition,
-                        })) || []),
-                      ]}
-                    />
-                  </div>
-                
-              )}
-              <div className="flex justify-end">
-                <Button
-                  type="button"
-                  data-testid="search-button"
-                  onClick={handleRequest}
-                  isLoading={isLoading}
-                  iconName="proicons:search"
-                >
-                  Search
-                </Button>
-              </div>
-            </div>
-
-            <div className="py-6 flex flex-col gap-[20px]">
-              {isLoading ? (
+          {
+            isDataFetching ?
+            <div className="w-full relative h-[40vh] flex items-center">
                 <div className="loader w-full m-auto"></div>
-              ) : (
-                form.weather.days?.map((day, index) => (
-                  <div
-                    key={index}
-                    className="bg-white border border-gray-100 my-1 rounded-md shadow-lg p-4"
-                  >
-                    <p className="font-semibold text-theme-blue mb-2">
-                      Date:{" "}
-                      {day.datetime
-                        ? new Date(day.datetime).toLocaleDateString("en-GB")
-                        : ""}
-                    </p>
-                    <DynamicIcons
-                      iconName={`wpf:${day.icon}`}
-                      width={35}
-                      height={35}
-                      className="text-theme-orange"
-                    />
-                    <p>
-                      Temperature: {day.temp}
-                      <sup>o</sup>C
-                    </p>
-                    <p>Wind Speed: {day.windspeed} m/s</p>
-                    <p>Description: {day.description}</p>
-                  </div>
-                ))
-              )}
             </div>
-          </form>
+            :
+            <form className="px-6 py-5">
+              <div className="relative">
+                <Select
+                  label="Country"
+                  data-testid="country"
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, country: e.target.value }))
+                  }
+                  value={country}
+                  options={countries.map((c) => ({
+                    value: c.name,
+                    label: c.name,
+                  }))}
+                />
+              </div>
+
+              <div className="relative py-4">
+                <Select
+                  label="State"
+                  data-testid="state"
+                  onChange={(e) =>
+                    setForm((prev) => ({ ...prev, state: e.target.value }))
+                  }
+                  value={state}
+                  options={
+                    states.length > 0
+                      ? states.map((s) => ({ value: s.name, label: s.name }))
+                      : [{ value: "", label: "No State to select from" }]
+                  }
+                  disabled={states.length === 0}
+                />
+              </div>
+
+              <div className="py-4">
+                <div className="flex w-full gap-[20px] flex-wrap sm:flex-nowrap">
+                  <Input
+                    label="Start Date"
+                    data-testid="start-date"
+                    type="date"
+                    value={startDate}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        startDate: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                  <Input
+                    label="End Date"
+                    data-testid="end-date"
+                    type="date"
+                    value={endDate}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, endDate: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center pt-3 justify-between">
+                {form.weather.days?.length > 0 && (                
+                    <div className="relative py-4">
+                      <Select
+                        label="Filter by"
+                        data-testid="filter-condition"
+                        onChange={handleFiltering}
+                        options={[
+                          { value: "all", label: "Show All" },
+                          ...(allConditions?.map((condition) => ({
+                            value: condition,
+                            label: condition,
+                          })) || []),
+                        ]}
+                      />
+                    </div>
+                  
+                )}
+                <div className="flex justify-end">
+                  <Button
+                    type="button"
+                    data-testid="search-button"
+                    onClick={handleRequest}
+                    isLoading={isLoading}
+                    iconName="proicons:search"
+                  >
+                    Search
+                  </Button>
+                </div>
+              </div>
+
+              <div className="py-6 flex flex-col gap-[20px]">
+                {isLoading ? (
+                  <div className="loader w-full m-auto"></div>
+                ) : (
+                  form.weather.days?.map((day, index) => (
+                    <div
+                      key={index}
+                      className="bg-white border border-gray-100 my-1 rounded-md shadow-lg p-4"
+                    >
+                      <p className="font-semibold text-theme-blue mb-2">
+                        Date:{" "}
+                        {day.datetime
+                          ? new Date(day.datetime).toLocaleDateString("en-GB")
+                          : ""}
+                      </p>
+                      <DynamicIcons
+                        iconName={`wpf:${day.icon}`}
+                        width={35}
+                        height={35}
+                        className="text-theme-orange"
+                      />
+                      <p>
+                        Temperature: {day.temp}
+                        <sup>o</sup>C
+                      </p>
+                      <p>Wind Speed: {day.windspeed} m/s</p>
+                      <p>Description: {day.description}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </form>
+          }
         </div>
       </div>
     </div>

@@ -50,6 +50,7 @@ export const TodoFormModal = ({
   const [weather, setWeather] = useState<
     IWeatherStructure | IWeatherWithDateStructure | undefined
   >();
+  const [isDataFetching, setIsDataFetching] = useState(false);
 
   const defaultFormState = {
     name: "",
@@ -85,10 +86,15 @@ export const TodoFormModal = ({
 
   // Fetching countries from the API
   const fetchCountries = useCallback(async () => {
-    const allCountries = await getAllCountries();
-    setCountries(allCountries)
-    if (allCountries) {
-      setForm((prev) => ({ ...prev, country: allCountries[0]?.name }));
+    setIsDataFetching(true);
+    try {
+      const allCountries = await getAllCountries();
+      setCountries(allCountries);
+      if (allCountries) {
+        setForm((prev) => ({ ...prev, country: allCountries[0]?.name }));
+      }
+    } finally{
+
     }
   }, []);
 
@@ -100,11 +106,15 @@ export const TodoFormModal = ({
 
   // Fetching states by country id
   const fetchStates = async () =>{
-    const selectedCountryId = countries.find((region)=> region.name === country)?.id
-    const allStates = await getStatesByCountry(selectedCountryId as number);
-    setStates(allStates)
-    if(allStates){
-        setForm((prev) => ({ ...prev, state: allStates?.[0]?.name || '' }));
+    try{
+      const selectedCountryId = countries.find((region)=> region.name === country)?.id
+      const allStates = await getStatesByCountry(selectedCountryId as number);
+      setStates(allStates)
+      if(allStates){
+          setForm((prev) => ({ ...prev, state: allStates?.[0]?.name || '' }));
+      }
+    }finally {
+      setIsDataFetching(false)
     }
   }
 
@@ -309,51 +319,58 @@ export const TodoFormModal = ({
               {`${mode === "edit" ? "Edit" : "Add"} Todo List`}
             </p>
 
-            <form className="p-6 custom-scrollbar2" onSubmit={handleSubmit}>
-              <TodoForm
-                form={form}
-                setForm={setForm}
-                domId={domId}
-                subTaskLength={subTaskLength}
-                setSubTaskLength={setSubTaskLength}
-                addSubTasks={addSubTasks}
-                removeSubTask={removeSubTask}
-              />
-
-              <OutdoorEventWeather
-                isAnOutDoorEvent={isAnOutDoorEvent}
-                setIsAnOutDoorEvent={(checked) =>
-                  setForm((prev) => ({ ...prev, isAnOutDoorEvent: checked }))
-                }
-                domId={domId}
-                countries={countries}
-                states={states}
-                country={country}
-                state={state}
-                setForm={setForm}
-                weather={weather}
-                getWeatherForeCast={getWeatherForeCast}
-                isWeatherLoading={isWeatherLoading}
-              />
-
-              <span className="text-[12px]">
-                (N:B: You have to fill all required{" "}
-                <span className="text-red-500">*</span> field to submit)
-              </span>
-              <div className="flex items-center justify-end mt-4">
-                <Button
-                  type="submit"
-                  className={`
-                    ${!isFormValid ? "bg-[#cac9c9]" : "bg-theme-blue"}
-                    ${isFormValid && !isLoading ? "cursor-pointer" : "cursor-not-allowed"}
-                  `}
-                  isLoading={isLoading}
-                  disabled={!isFormValid || isLoading}
-                >
-                  Save
-                </Button>
+            {
+              isDataFetching ?
+              <div className="w-full relative h-[40vh] flex items-center">
+                  <div className="loader w-full m-auto"></div>
               </div>
-            </form>
+              :
+              <form className="p-6 custom-scrollbar2" onSubmit={handleSubmit}>
+                <TodoForm
+                  form={form}
+                  setForm={setForm}
+                  domId={domId}
+                  subTaskLength={subTaskLength}
+                  setSubTaskLength={setSubTaskLength}
+                  addSubTasks={addSubTasks}
+                  removeSubTask={removeSubTask}
+                />
+
+                <OutdoorEventWeather
+                  isAnOutDoorEvent={isAnOutDoorEvent}
+                  setIsAnOutDoorEvent={(checked) =>
+                    setForm((prev) => ({ ...prev, isAnOutDoorEvent: checked }))
+                  }
+                  domId={domId}
+                  countries={countries}
+                  states={states}
+                  country={country}
+                  state={state}
+                  setForm={setForm}
+                  weather={weather}
+                  getWeatherForeCast={getWeatherForeCast}
+                  isWeatherLoading={isWeatherLoading}
+                />
+
+                <span className="text-[12px]">
+                  (N:B: You have to fill all required{" "}
+                  <span className="text-red-500">*</span> field to submit)
+                </span>
+                <div className="flex items-center justify-end mt-4">
+                  <Button
+                    type="submit"
+                    className={`
+                      ${!isFormValid ? "bg-[#cac9c9]" : "bg-theme-blue"}
+                      ${isFormValid && !isLoading ? "cursor-pointer" : "cursor-not-allowed"}
+                    `}
+                    isLoading={isLoading}
+                    disabled={!isFormValid || isLoading}
+                  >
+                    Save
+                  </Button>
+                </div>
+              </form>
+            }
           </div>
         )}
 
