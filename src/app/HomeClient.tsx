@@ -106,6 +106,7 @@ export const HomeClient = () => {
                     <div className="flex justify-end gap-[20px]">
                         <div
                             className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95"
+                            data-testid="open-weather-modal"
                             onClick={() => setWeatherModalOpen(true)}
                         >
                             <span><DynamicIcons iconName="fluent:weather-hail-night-48-regular" /></span>

@@ -7,4 +7,10 @@ export default defineConfig({
       bundler: "webpack",
     },
   },
+
+  e2e: {
+    specPattern: 'cypress/component/**/*.cy.{js,ts,jsx,tsx}',
+    video: true, 
+    screenshotOnRunFailure: true, 
+  },
 });
