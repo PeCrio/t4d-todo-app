@@ -10,7 +10,7 @@ export async function getAllCountries(){
             return data.data;
         }
     }catch(err){
-        throw new Error((err as Error).message || "An error occurred.");
+        toast.error((err as Error).message || "An error occurred.");
     }
 }
 
