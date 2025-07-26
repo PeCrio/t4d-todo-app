@@ -36,38 +36,38 @@ export const HomeClient = () => {
 
     const refreshTodoList = useCallback(() => {
         setPageLoading(true);
-        setTimeout(() => {
-            try {
-                const stored = LocalStorageService.get<IListStructure[]>() ?? [];
-                let locallySavedData = stored;
+        try {
+            const stored = LocalStorageService.get<IListStructure[]>() ?? [];
+            let locallySavedData = stored;
 
-                if (selectedTag) {
-                    locallySavedData = locallySavedData.filter((list) => list.tag === selectedTag);
-                }
-
-                if (selectedFilterQuery) {
-                    const today = getISODateFormat(new Date());
-
-                    if (selectedFilterQuery.toLowerCase() === 'today') {
-                        locallySavedData = locallySavedData.filter((list) => getISODateFormat(list.date) === today);
-                    } else if (selectedFilterQuery.toLowerCase() === 'past due-date') {
-                        locallySavedData = locallySavedData.filter((list) => getISODateFormat(list.date) < today);
-                    } else if (selectedFilterQuery.toLowerCase() === 'pending') {
-                        locallySavedData = locallySavedData.filter((list) => !list.completed);
-                    }
-                }
-
-                if (locallySavedData) {
-                    setAllTodoList(locallySavedData);
-                    setCompleted(locallySavedData.filter((list) => list.completed));
-                    setTodo(locallySavedData.filter((list) => !list.completed));
-                }
-            } catch (err) {
-                toast.error((err as Error).message || "An error occurred while refreshing the list.");
-            } finally {
-                setPageLoading(false);
+            if (selectedTag) {
+                locallySavedData = locallySavedData.filter((list) => list.tag === selectedTag);
             }
-        }, 500);
+
+            if (selectedFilterQuery) {
+                const today = getISODateFormat(new Date());
+
+                if (selectedFilterQuery.toLowerCase() === 'today') {
+                    locallySavedData = locallySavedData.filter((list) => getISODateFormat(list.date) === today);
+                } else if (selectedFilterQuery.toLowerCase() === 'past due-date') {
+                    locallySavedData = locallySavedData.filter((list) => getISODateFormat(list.date) < today);
+                } else if (selectedFilterQuery.toLowerCase() === 'pending') {
+                    locallySavedData = locallySavedData.filter((list) => !list.completed);
+                }
+            }
+
+            if (locallySavedData) {
+                setAllTodoList(locallySavedData);
+                setCompleted(locallySavedData.filter((list) => list.completed));
+                setTodo(locallySavedData.filter((list) => !list.completed));
+            }
+        } catch (err) {
+            toast.error((err as Error).message || "An error occurred while refreshing the list.");
+        } finally {
+            setPageLoading(false);
+        }
+        // setTimeout(() => {
+        // }, 500);
     }, [selectedTag, selectedFilterQuery]);
 
     useEffect(() => {
@@ -105,7 +105,7 @@ export const HomeClient = () => {
                 <main className="w-full py-4">
                     <div className="flex justify-end gap-[20px]">
                         <div
-                            className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95"
+                            className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-md hover:scale-95 transition-all duration-300 ease-in-out"
                             data-testid="open-weather-modal"
                             onClick={() => setWeatherModalOpen(true)}
                         >
@@ -113,26 +113,27 @@ export const HomeClient = () => {
                             <span>Get Weather Predictions</span>
                         </div>
                         <div
-                            className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-sm hover:scale-95"
+                            data-testid="todo-open-modal"
+                            className="flex items-center cursor-pointer gap-[10px] bg-theme-blue text-white w-fit p-2 px-4 rounded-md hover:scale-95 transition-all duration-300 ease-in-out"
                             onClick={addNewTask}
                         >
                             <span><DynamicIcons iconName="bitcoin-icons:plus-filled" /></span>
                             <span>Add New Task</span>
                         </div>
                     </div>
-                    <div className="flex items-center justify-between todo-task-div">
+                    <div className="flex items-center justify-between gap-3 md:gap-6 flex-wrap pt-5">
                         {queries.map((query) => (
                             <span
                                 key={query}
                                 onClick={() => setSelectedFilterQuery(query)}
-                                className={`${query.toLowerCase() === selectedFilterQuery?.toLowerCase() ? 'text-theme-orange font-semibold' : 'text-theme-blue'}`}
+                                className={`cursor-pointer text-base sm:text-lg font-semibold p-6 whitespace-nowrap flex-1 min-w-[120px] h-[120px] flex items-center justify-center border border-theme-blue rounded-lg hover:scale-95 transition-all duration-300 ease-in-out ${query.toLowerCase() === selectedFilterQuery?.toLowerCase() ? 'text-theme-orange font-semibold' : 'text-theme-blue'}`}
                             >
                                 {query}
                             </span>
                         ))}
                     </div>
                     <div>
-                        <p className="text-xl text-theme-blue font-semibold py-4">Todo Lists</p>
+                        <p className="text-xl text-theme-blue font-semibold pt-8 mb-3 border-b">Todo List</p>
                         {pageLoading ? (
                             <div className="w-full relative h-[40vh]">
                                 <div className="loader w-full m-auto"></div>
@@ -143,8 +144,8 @@ export const HomeClient = () => {
                                 <StatusDiv modalOpen={modalOpen} data={completed} completed={true} status="Completed" refreshTodoList={refreshTodoList} handleTaskDrag={handleTaskDrag} />
                             </div>
                         ) : (
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-[20px]">
-                                No data found
+                            <div className="flex items-center justify-center py-12">
+                                <p className="text-base font-semibold">No data found</p>
                             </div>
                         )}
                     </div>

@@ -145,21 +145,23 @@ export const WeatherPredictionsByDate = ({
   };
 
   return (
-    <div className="h-full flex items-center justify-center z-50">
-      <div className="max-w-[600px] w-full relative mx-auto">
-        <div className="bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll">
+    <div className="h-full flex items-center justify-center z-50 p-1">
+      <div className="bg-white max-w-[600px] w-full mx-auto h-fit rounded-md p-1">
+        <div className="bg- w-full max-h-[70vh] rounded-md relative overflow-y-scroll custom-scrollbar">
+          {/* Modal Header */}
           <div
-            className="flex justify-end pt-2"
+            className="flex items-center justify-between gap-6 border-b px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-[99999] bg-white"
             onClick={() => setModalOpen(false)}
           >
+            <p className="text-theme-blue font-semibold text-base sm:text-lg">
+              Find the right weather for your outing
+            </p>
+
             <DynamicIcons
               iconName="iconoir:cancel"
-              className="text-[28px] text-theme-blue cursor-pointer bg-white rounded-full"
+              className="text-xl text-theme-blue cursor-pointer hover:text-red-600 bg-gray-200 rounded-full transition-all duration-300 ease-in-out"
             />
           </div>
-          <p className="text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white z-[2]">
-            Find the right weather for your outing
-          </p>
 
           {
             isDataFetching ?

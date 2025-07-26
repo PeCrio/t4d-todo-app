@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { getBaseUrl } from "@/utils/Constants";
 
 const baseUrl = getBaseUrl();
+
 export async function getAllCountries(){
     try{
         const { data } = await axios.get(`${baseUrl}/api/countries`);

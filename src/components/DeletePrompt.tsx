@@ -3,7 +3,7 @@ import { Button } from "./ui"
 
 const DeletePrompt = ({isLoading, handleDelete}: {isLoading: boolean, handleDelete: () => void}) => {
   return (
-    <div className="bg-white w-96 max-h-[80vh] rounded-md relative overflow-scroll custom-scrollbar2">
+    <div className="bg-white w-96 max-h-[80vh] rounded-md relative">
         <p className="text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white">
             {`Delete Todo Item`}{" "}
         </p>
