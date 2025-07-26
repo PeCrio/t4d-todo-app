@@ -1,6 +1,6 @@
 describe('Weather Predictions Modal', () => {
   it('opens modal and submits weather search', () => {
-    cy.visit('http://localhost:3000/');
+    cy.visit('http://localhost:3001/');
 
     // Open modal
     cy.get('[data-testid="open-weather-modal"]').click();

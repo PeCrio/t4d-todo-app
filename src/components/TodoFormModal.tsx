@@ -297,80 +297,84 @@ export const TodoFormModal = ({
   };
 
   return (
-    <div className="h-full flex items-center justify-center z-50">
+    <div className="h-full flex items-center justify-center z-50 p-1">
       <div
+        data-testid="todo-modal"
         className={`max-w-[600px] ${
           mode !== "delete" ? "w-full" : ""
         } relative mx-auto`}
       >
         {(mode === "add" || mode === "edit") && (
-          <div className="bg-white w-full max-h-[70vh] rounded-md relative overflow-scroll">
-            {/* Cancel icon inside modal */}
-            <div
-              className="flex items-end justify-end pt-2"
-              onClick={() => setModalOpen(false)}
-            >
-              <DynamicIcons
-                iconName="iconoir:cancel"
-                className="text-[28px] text-theme-blue cursor-pointer bg-red rounded-full"
-              />
-            </div>
-            <p className="text-theme-blue font-semibold border-b px-6 py-4 sticky top-0 bg-white">
-              {`${mode === "edit" ? "Edit" : "Add"} Todo List`}
-            </p>
+          <div className="bg-white w-full h-fit rounded-md p-1">
+            <div className="bg- w-full max-h-[70vh] rounded-md relative overflow-y-scroll custom-scrollbar">
+              {/* Modal Header */}
+              <div
+                className="flex items-center justify-between gap-6 border-b px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-[99999] bg-white"
+                onClick={() => setModalOpen(false)}
+                >
+                <p className="text-theme-blue font-semibold text-base sm:text-lg">
+                  {`${mode === "edit" ? "Edit" : "Add"} Todo List`}
+                </p>
 
-            {
-              isDataFetching ?
-              <div className="w-full relative h-[40vh] flex items-center">
-                  <div className="loader w-full m-auto"></div>
+                <DynamicIcons
+                  iconName="iconoir:cancel"
+                  className="text-xl text-theme-blue cursor-pointer hover:text-red-600 bg-gray-200 rounded-full transition-all duration-300 ease-in-out"
+                />
               </div>
-              :
-              <form className="p-6 custom-scrollbar2" onSubmit={handleSubmit}>
-                <TodoForm
-                  form={form}
-                  setForm={setForm}
-                  domId={domId}
-                  subTaskLength={subTaskLength}
-                  setSubTaskLength={setSubTaskLength}
-                  addSubTasks={addSubTasks}
-                  removeSubTask={removeSubTask}
-                />
 
-                <OutdoorEventWeather
-                  isAnOutDoorEvent={isAnOutDoorEvent}
-                  setIsAnOutDoorEvent={(checked) =>
-                    setForm((prev) => ({ ...prev, isAnOutDoorEvent: checked }))
-                  }
-                  domId={domId}
-                  countries={countries}
-                  states={states}
-                  country={country}
-                  state={state}
-                  setForm={setForm}
-                  weather={weather}
-                  getWeatherForeCast={getWeatherForeCast}
-                  isWeatherLoading={isWeatherLoading}
-                />
-
-                <span className="text-[12px]">
-                  (N:B: You have to fill all required{" "}
-                  <span className="text-red-500">*</span> field to submit)
-                </span>
-                <div className="flex items-center justify-end mt-4">
-                  <Button
-                    type="submit"
-                    className={`
-                      ${!isFormValid ? "bg-[#cac9c9]" : "bg-theme-blue"}
-                      ${isFormValid && !isLoading ? "cursor-pointer" : "cursor-not-allowed"}
-                    `}
-                    isLoading={isLoading}
-                    disabled={!isFormValid || isLoading}
-                  >
-                    Save
-                  </Button>
+              {
+                isDataFetching ?
+                <div className="w-full relative h-[40vh] flex items-center">
+                    <div className="loader w-full m-auto"></div>
                 </div>
-              </form>
-            }
+                :
+                <form className="p-6" onSubmit={handleSubmit}>
+                  <TodoForm
+                    form={form}
+                    setForm={setForm}
+                    domId={domId}
+                    subTaskLength={subTaskLength}
+                    setSubTaskLength={setSubTaskLength}
+                    addSubTasks={addSubTasks}
+                    removeSubTask={removeSubTask}
+                  />
+
+                  <OutdoorEventWeather
+                    isAnOutDoorEvent={isAnOutDoorEvent}
+                    setIsAnOutDoorEvent={(checked) =>
+                      setForm((prev) => ({ ...prev, isAnOutDoorEvent: checked }))
+                    }
+                    domId={domId}
+                    countries={countries}
+                    states={states}
+                    country={country}
+                    state={state}
+                    setForm={setForm}
+                    weather={weather}
+                    getWeatherForeCast={getWeatherForeCast}
+                    isWeatherLoading={isWeatherLoading}
+                  />
+
+                  <span className="text-[12px]">
+                    (N:B: You have to fill all required{" "}
+                    <span className="text-red-500">*</span> field to submit)
+                  </span>
+                  <div className="flex items-center justify-end mt-4">
+                    <Button
+                      type="submit"
+                      className={`
+                        ${!isFormValid ? "bg-[#cac9c9]" : "bg-theme-blue"}
+                        ${isFormValid && !isLoading ? "cursor-pointer" : "cursor-not-allowed"}
+                      `}
+                      isLoading={isLoading}
+                      disabled={!isFormValid || isLoading}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </form>
+              }
+            </div>
           </div>
         )}
 

@@ -28,6 +28,7 @@ export const TodoForm = ({
   return (
     <div className="flex flex-col gap-[20px]">
       <Input
+        data-testid="todo-name"
         label="Name"
         type="text"
         value={name}
@@ -39,6 +40,7 @@ export const TodoForm = ({
       <div className="w-full flex flex-col">
         <span className="pb-1">Description</span>
         <textarea
+          data-testid="todo-description"
           rows={4}
           value={description}
           placeholder="Enter Description"
@@ -49,6 +51,7 @@ export const TodoForm = ({
 
       <div className="flex gap-[20px] w-full">
         <Input
+          data-testid="todo-date"
           label="Due Date"
           type="date"
           value={date}
@@ -56,6 +59,7 @@ export const TodoForm = ({
           required
         />
         <Input
+          data-testid="todo-tag"
           label="Tag"
           type="text"
           value={tag}
@@ -68,6 +72,7 @@ export const TodoForm = ({
         <div className="flex items-center justify-between gap-[5px]">
           <div className="flex items-center gap-[5px]">
             <input
+              data-testid="todo-has-subtasks"
               type="checkbox"
               className="rounded-md"
               checked={hasSubTasks}
@@ -83,6 +88,7 @@ export const TodoForm = ({
           </div>
           {hasSubTasks && (
             <Button
+              data-testid="todo-add-subtask"
               type="button"
               onClick={() => {
                 setSubTaskLength((prev) => prev + 1);
@@ -100,6 +106,7 @@ export const TodoForm = ({
             <div key={index} className="flex gap-[10px] flex-col py-2">
               <div className="flex items-center gap-[10px]">
                 <Input
+                  data-testid={`todo-subtask-${index}`}
                   type="text"
                   value={subTasks[index]}
                   className="w-full rounded-md"
@@ -107,6 +114,7 @@ export const TodoForm = ({
                   onChange={(e) => addSubTasks(index, e)}
                 />
                 <Button
+                  data-testid={`todo-remove-subtask-${index}`}
                   type="button"
                   onClick={() => removeSubTask(index)}
                   variant="danger"

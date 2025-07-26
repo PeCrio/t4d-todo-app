@@ -25,33 +25,6 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
 
-.todo-task-div {
-  /* display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr; */
-  gap: 20px;
-  padding-top: 20px;
-}
-.todo-task-div span{
-  padding: 20px;
-  border: 1px solid var(--color-theme-blue);
-  border-radius: 10px;
-  width: 100%;
-  height: 120px;
-  text-align: center;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  font-weight: 600;
-  /* color: var(--color-theme-blue); */
-  cursor: pointer;
-  max-width: 280px;
-}
-
-.todo-task-div span:hover{
-  scale: 1.02;
-  transition: all .2s ease-in-out;
-}
-
 .inputDiv {
   @apply bg-[#d9d9d9] border-b border-theme-blue outline-none p-2;
 }
@@ -63,28 +36,6 @@ select {
   -moz-appearance:none;
   -webkit-appearance:none;
   appearance:none;
-}
-
-@media screen and (max-width: 1032px) {
-  .todo-task-div{
-    display: flex;
-  }
-}
-
-@media screen and (max-width: 760px) {
-  .todo-task-div{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-  .todo-task-div span{
-    max-width: none;
-  }
-}
-
-@media screen and (max-width: 400px) {
-  .todo-task-div{
-    grid-template-columns: 1fr;
-  }
 }
 
 .loader {
@@ -142,22 +93,23 @@ body:has(.overlay){
     overflow: hidden;
 }
 
+
 /* scrollbar */
-.custom-scrollbar2::-webkit-scrollbar {
+.custom-scrollbar::-webkit-scrollbar {
   width: 8px;
   /* display: none; */
   height: 4px;
-  width: 2px;
+  width: 5px;
 }
 
-.custom-scrollbar2::-webkit-scrollbar-track {
-  background: transparent;
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #E3E4E6;
   cursor: pointer;
   border-radius: 8px;
 }
 
-.custom-scrollbar2::-webkit-scrollbar-thumb {
-  background: transparent;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #142948;
   border-radius: 8px;
   width: 2px;
   cursor: pointer;

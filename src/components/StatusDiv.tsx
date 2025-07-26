@@ -79,7 +79,7 @@ const StatusDiv = ({ status, completed, data, refreshTodoList, handleTaskDrag }:
   return (
     <div>
       <p className="pb-2">{status}</p>
-      <div ref={itemRef} className={`border border-theme-blue rounded-md px-2 pb-8 ${isOver ? 'bg-blue-100' : 'bg-[#e8e8e8]'}`}>
+      <div ref={itemRef} className={`border border-theme-blue rounded-md px-2 pb-6 ${isOver ? 'bg-blue-100' : 'bg-[#e8e8e8]'}`}>
         {data.length > 0 ? (
           data?.map((item, index) => (
             <DraggableListItem
@@ -95,7 +95,7 @@ const StatusDiv = ({ status, completed, data, refreshTodoList, handleTaskDrag }:
             />
           ))
         ) : (
-          <div className="h-[200px] flex items-center justify-center">
+          <div className="pt-12 pb-10 flex items-center justify-center text-lg">
             No list found
           </div>
         )}
