@@ -19,6 +19,7 @@ export const OutdoorEventWeather = ({
   weather,
   getWeatherForeCast,
   isWeatherLoading,
+  isStateFetching
 }: OutdoorEventWeatherProps) => {
   return (
     <div className="py-4">
@@ -54,6 +55,9 @@ export const OutdoorEventWeather = ({
               }
               disabled={states.length === 0}
             />
+            {
+              isStateFetching && <p className="text-center">Loading...</p>
+            }
           </div>
           <SingleWeatherDetails weather={weather} />
           <div className="pt-4 flex justify-end">
