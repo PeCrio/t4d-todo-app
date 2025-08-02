@@ -32,4 +32,5 @@ export interface OutdoorEventWeatherProps {
   weather: IWeatherStructure | IWeatherWithDateStructure | undefined;
   getWeatherForeCast: () => Promise<void>;
   isWeatherLoading: boolean;
+  isStateFetching: boolean;
 }
