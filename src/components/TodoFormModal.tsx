@@ -14,7 +14,6 @@ import {
   SetStateAction,
   useId,
   useEffect,
-  useCallback,
 } from "react";
 import { toast } from "react-toastify";
 import axiosInstance from "@/app/api/axios";
@@ -50,7 +49,8 @@ export const TodoFormModal = ({
   const [weather, setWeather] = useState<
     IWeatherStructure | IWeatherWithDateStructure | undefined
   >();
-  const [isDataFetching, setIsDataFetching] = useState(false);
+  const [isCountriesFetching, setIsCountriesFetching] = useState(false);
+const [isStatesFetching, setIsStatesFetching] = useState(false);
 
   const defaultFormState = {
     name: "",
@@ -85,18 +85,24 @@ export const TodoFormModal = ({
   const domId = useId();
 
   // Fetching countries from the API
-  const fetchCountries = useCallback(async () => {
-    setIsDataFetching(true);
-    try {
-      const allCountries = await getAllCountries();
-      setCountries(allCountries);
-      if (allCountries) {
-        setForm((prev) => ({ ...prev, country: allCountries[0]?.name }));
-      }
-    } finally{
+const fetchCountries = async () => {
+  setIsCountriesFetching(true);
+  try {
+    const countries = LocalStorageService.get<ICountryStructure[]>('countries') 
+      ?? await getAllCountries();
 
+    if (countries && countries.length > 0) {
+      setCountries(countries);
+      setForm((prev) => ({ ...prev, country: countries[0].name }));
+
+      if (!LocalStorageService.get('countries')) {
+        LocalStorageService.set(countries, 'countries');
+      }
     }
-  }, []);
+  } finally {
+    setIsCountriesFetching(false);
+  }
+};
 
   useEffect(() => {
   if (modalOpen) {
@@ -104,25 +110,36 @@ export const TodoFormModal = ({
   }
 }, [modalOpen]);
 
-  // Fetching states by country id
-  const fetchStates = async () =>{
-    try{
-      const selectedCountryId = countries.find((region)=> region.name === country)?.id
-      const allStates = await getStatesByCountry(selectedCountryId as number);
-      setStates(allStates)
-      if(allStates){
-          setForm((prev) => ({ ...prev, state: allStates?.[0]?.name || '' }));
+const fetchStates = async () => {
+  setIsStatesFetching(true);
+  try {
+    const selectedCountryId = countries.find((region) => region.name === country)?.id;
+
+    if (!selectedCountryId) return;
+
+    const states =
+      LocalStorageService.get<IStateStructure[]>(`${selectedCountryId}`) ??
+      await getStatesByCountry(selectedCountryId);
+
+    if (states && states.length > 0) {
+      setStates(states);
+      setForm((prev) => ({ ...prev, state: states[0].name }));
+
+      if (!LocalStorageService.get(`${selectedCountryId}`)) {
+        LocalStorageService.set(states, `${selectedCountryId}`);
       }
-    }finally {
-      setIsDataFetching(false)
     }
+  } finally {
+    setIsStatesFetching(false);
   }
+};
+
 
   useEffect(() => {
-    if (country) {
+    if (country && modalOpen) {
       fetchStates();
     }
-  }, [country]);
+  }, [country, modalOpen]);
 
   useEffect(() => {
     const preExistingData = LocalStorageService.get<IListStructure[]>();
@@ -323,7 +340,7 @@ export const TodoFormModal = ({
               </div>
 
               {
-                isDataFetching ?
+                isCountriesFetching ?
                 <div className="w-full relative h-[40vh] flex items-center">
                     <div className="loader w-full m-auto"></div>
                 </div>
@@ -353,6 +370,7 @@ export const TodoFormModal = ({
                     weather={weather}
                     getWeatherForeCast={getWeatherForeCast}
                     isWeatherLoading={isWeatherLoading}
+                    isStateFetching={isStatesFetching}
                   />
 
                   <span className="text-[12px]">

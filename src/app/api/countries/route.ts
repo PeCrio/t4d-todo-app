@@ -4,6 +4,6 @@ import { ICountryStructure } from "@/types/ListTypes";
 
 export async function GET(){
     const allDataArray = allData as ICountryStructure[]
-    const countries = allDataArray.map(({ states, name, id }) => ({ name, id, states }));
+    const countries = allDataArray.map(({ name, id }) => ({ name, id }));
     return NextResponse.json({message: 'Countries fetched successfully', data: countries})
 }

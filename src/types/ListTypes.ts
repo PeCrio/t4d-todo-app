@@ -21,29 +21,34 @@ export type IFilterContextType = {
     setSelectedFilterQuery: (query: string) => void;
 }
 
+export interface IAPIStructure {
+  id: number;
+  name: string;
+  states: IStateStructure[];
+}
+
 export interface ICountryStructure {
   id: number;
   name: string;
-  phone_code: string;
-  capital: string;
-  region: string;
-  region_id: string;
-  subregion: string;
-  subregion_id: string;
-  nationality: string;
-  latitude: string;
-  longitude: string;
-  states: IStateStructure[];
+  phone_code?: string;
+  capital?: string;
+  region?: string;
+  region_id?: string;
+  subregion?: string;
+  subregion_id?: string;
+  nationality?: string;
+  latitude?: string;
+  longitude?: string;
 }
 
 export interface IStateStructure {
   id: number;
   name: string;
-  state_code: string;
-  latitude: string;
-  longitude: string;
-  type: string | null;
-  cities: ICityStructure[];
+  state_code?: string;
+  latitude?: string;
+  longitude?: string;
+  type?: string | null;
+  cities?: ICityStructure[];
 }
 
 export interface ICityStructure {
